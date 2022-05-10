@@ -3,6 +3,7 @@ package burp;
 import com.sun.nio.sctp.MessageInfo;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class BurpHttpListener implements  IHttpListener, IProxyListener  {
     private static byte[] rawData = null;
@@ -26,7 +27,8 @@ public class BurpHttpListener implements  IHttpListener, IProxyListener  {
     }
     //requestIn阶段，收到客户端发送的加密request，进行解密并替换requestBody，使得BurpSuite中显示明文request；
     private void requestIn(IInterceptedProxyMessage message) {
-       IHttpRequestResponse messageInfo = message.getMessageInfo();
+        BurpExtender.stdout.println("requestIn：");
+        IHttpRequestResponse messageInfo = message.getMessageInfo();
         rawData = messageInfo.getRequest();//提前放好rawData
         IRequestInfo requestInfo = BurpExtender.callbacks.getHelpers().analyzeRequest(messageInfo);
         url = requestInfo.getUrl().toString();
@@ -40,31 +42,42 @@ public class BurpHttpListener implements  IHttpListener, IProxyListener  {
     }
     //requestOut阶段，即将发送request到服务端，读取明文的request，重新进行加密（包括签名、编码、更新时间戳等），使得服务端正常解析；
     private void requestOut(IHttpRequestResponse messageInfo,int toolFlag) {
-        if(BurpExtender.callbacks.TOOL_PROXY==toolFlag){
-            if(rawData!=null){
-                messageInfo.setRequest(rawData);
-                rawData = null;
+        BurpExtender.stdout.println("requestOut：");
+        IRequestInfo requestInfo = BurpExtender.callbacks.getHelpers().analyzeRequest(messageInfo);
+        url = requestInfo.getUrl().toString();
+        rawData = messageInfo.getRequest();
+        String requestData = new String(rawData);
+        String body = requestData.substring( requestInfo.getBodyOffset());
+        //原始的body进行解密
+        String bodyt = BurpExtender.gui.findAndRun(url,body, ReqRep.REQUEST_SEND);
+        List<String> headerslist=requestInfo.getHeaders();
+        //repeater发送不会自动修改Content-Length长度。
+        String Length="";
+        for (int i=0;i< headerslist.size();i++){
+            if (headerslist.get(i).startsWith("Content-Length:")){
+                Length=headerslist.get(i);
             }
-            //如果是代理列表里面的则是发送原始报文，其他的需要重新加密报文
-        }else{
-            IRequestInfo requestInfo = BurpExtender.callbacks.getHelpers().analyzeRequest(messageInfo);
-            url = requestInfo.getUrl().toString();
-            String requestData = new String(rawData);
-            String body = requestData.substring( requestInfo.getBodyOffset());
-            //原始的body进行解密
-            body = BurpExtender.gui.findAndRun(url,body, ReqRep.REQUEST_SEND);
-            //获取header部分
-            String header = requestData.substring(0,requestInfo.getBodyOffset());
-            messageInfo.setRequest((header+body).getBytes());
         }
+        //获取header部分
+        String header = requestData.substring(0,requestInfo.getBodyOffset());
+        if (bodyt!=body){
+            header=header.replaceAll(Length,"Content-Length:"+String.valueOf(bodyt.length()));
+        }
+        BurpExtender.stdout.println("requestMaxBody："+header+bodyt);
+        messageInfo.setRequest((header+bodyt).getBytes());
+
+
 
     }
     //responseIn阶段，收到加密response，进行解密并替换responseBody，使得BurpSuite中显示明文response；
-    private void responseIn(IHttpRequestResponse messageInfo,int toolFlag) {;
+    private void responseIn(IHttpRequestResponse messageInfo,int toolFlag) {
         rawData = messageInfo.getResponse();//提前放好rawData
         IResponseInfo responseInfo = BurpExtender.callbacks.getHelpers().analyzeResponse(rawData);
+        IRequestInfo requestInfo = BurpExtender.callbacks.getHelpers().analyzeRequest(messageInfo);
+        url=requestInfo.getUrl().toString();
         String responseData = new String(rawData);
         String body = responseData.substring( responseInfo.getBodyOffset());
+        BurpExtender.stdout.println("responsebody："+body);
         //原始的body进行解密
         body = BurpExtender.gui.findAndRun(url,body, ReqRep.RESPONSE_RECEIVE);
         //获取header部分
@@ -73,6 +86,7 @@ public class BurpHttpListener implements  IHttpListener, IProxyListener  {
     }
     //responseOut阶段，即将发送response到客户端，读取明文的response，重新进行加密，使得客户端正常解析。
     private void responseOut(IInterceptedProxyMessage message) {
+        BurpExtender.stdout.println("responseOut：");
         if(rawData!=null){
             message.getMessageInfo().setResponse(rawData);
             rawData = null;
