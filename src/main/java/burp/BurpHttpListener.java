@@ -71,7 +71,6 @@ public class BurpHttpListener implements  IHttpListener, IProxyListener  {
     }
     //responseIn阶段，收到加密response，进行解密并替换responseBody，使得BurpSuite中显示明文response；
     private void responseIn(IHttpRequestResponse messageInfo,int toolFlag) {
-        BurpExtender.stdout.println("responseIn：");
         rawData = messageInfo.getResponse();//提前放好rawData
         IResponseInfo responseInfo = BurpExtender.callbacks.getHelpers().analyzeResponse(rawData);
         IRequestInfo requestInfo = BurpExtender.callbacks.getHelpers().analyzeRequest(messageInfo);
