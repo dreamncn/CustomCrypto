@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Objects;
 
@@ -292,7 +293,8 @@ public class GUI {
 
 		if(Objects.equals(body, ""))return body;
 		for (String key: jsonObjectConfig.keySet()) {
-			if(url.startsWith(key)){
+			System.out.println(key);
+			if(url.contains(key)){
 				try{
 					body = run(jsonObjectConfig.getString(key),flag,body );
 					//BurpExtender.stdout.println("加密或者解密的Body："+body);
@@ -303,6 +305,17 @@ public class GUI {
 			}
 		}
 		return body;
+	}
+
+	public  boolean find(String url, String[] cmd){
+		for (String key: jsonObjectConfig.keySet()) {
+			BurpExtender.stdout.println("数据："+key+"   url:"+url);
+			if(url.startsWith(key)){
+				cmd[0] = jsonObjectConfig.getString(key);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void refresh() {
@@ -331,12 +344,17 @@ public class GUI {
 
 	}
 
-	public String run(String cmd, String flag, String data) throws Exception {
-		data = URLEncoder.encode(Base64.getEncoder().encodeToString(data.getBytes()), "UTF-8");
-		return execCmd(cmd + " "+ flag +" " + data);
+	public String run(String cmd, String flag, String data)  {
+		BurpExtender.stdout.println("------------------------------------------");
+		BurpExtender.stdout.println("发送："+data);
+		data = Base64.getEncoder().encodeToString(data.getBytes());
+		String result = execCmd(cmd + " "+ flag +" " + data);
+		BurpExtender.stdout.println("执行命令："+cmd + " "+ flag +" " + data);
+		BurpExtender.stdout.println("接收："+result);
+		return result;
 	}
 
-	private String execCmd(String cmd) throws Exception {
+	private String execCmd(String cmd)  {
 		StringBuilder result = new StringBuilder();
 
 		Process process = null;
@@ -349,20 +367,20 @@ public class GUI {
 
 			// 方法阻塞, 等待命令执行完成（成功会返回0）
 			process.waitFor();
-
 			// 获取命令执行结果, 有两个结果: 正常的输出 和 错误的输出（PS: 子进程的输出就是主进程的输入）
-			bufrIn = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
-			bufrError = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8));
 
+			bufrIn = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+			BurpExtender.stdout.println("执行结果流："+ Arrays.toString(bufrIn.lines().toArray()));
 			// 读取输出
-			String line = null;
+			String line;
 			while ((line = bufrIn.readLine()) != null) {
 				result.append(line).append('\n');
 			}
-			while ((line = bufrError.readLine()) != null) {
-				result.append(line).append('\n');
-			}
-
+		} catch (IOException | InterruptedException e) {
+			BurpExtender.stdout.println("错误："+result);
+			result.append(e);
+			e.printStackTrace();
 		} finally {
 			if (bufrIn != null) {
 				try {

@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: 
+Class-Path: burp-extender-api-1.7.22.jar fastjson-1.2.79.jar
+
