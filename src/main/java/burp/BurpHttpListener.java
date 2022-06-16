@@ -1,6 +1,8 @@
 package burp;
 
 
+import java.util.Arrays;
+
 public class BurpHttpListener implements  IHttpListener, IProxyListener  {
 
 
@@ -101,12 +103,11 @@ public class BurpHttpListener implements  IHttpListener, IProxyListener  {
                 query = query.substring(0,query.indexOf(" "));//从第一个参数到http尾部有一个空格
             }
             String body = requestData.substring(requestInfo.getBodyOffset());
-            String sendData = query+"||||"+body;
+            String sendData = query+" "+body;
             String result = BurpExtender.gui.run(cmd,ReqRep.REQUEST_RECEIVE,sendData);
 
-
-
-            String[] resultArray = result.split("||||");
+            String[] resultArray = result.split(" ");
+            BurpExtender.stdout.println(Arrays.toString(resultArray));
             String replaceBody;
             if(resultArray.length==2){
                 replaceBody = resultArray[1];
@@ -144,12 +145,12 @@ public class BurpHttpListener implements  IHttpListener, IProxyListener  {
                 query = query.substring(0,query.indexOf(" "));//从第一个参数到http尾部有一个空格
             }
             String body = requestData.substring(requestInfo.getBodyOffset());
-            String sendData = query+"||||"+body;
+            String sendData = query+" "+body;
             String result = BurpExtender.gui.run(cmd,ReqRep.REQUEST_SEND,sendData);
 
 
 
-            String[] resultArray = result.split("||||");
+            String[] resultArray = result.split(" ");
             String replaceBody;
             if(resultArray.length==2){
                 replaceBody = resultArray[1];

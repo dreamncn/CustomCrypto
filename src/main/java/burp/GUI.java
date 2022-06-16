@@ -346,6 +346,13 @@ public class GUI {
 
 	public String run(String cmd, String flag, String data)  {
 		BurpExtender.stdout.println("------------------------------------------");
+		switch (flag){
+			case ReqRep.REQUEST_RECEIVE:BurpExtender.stdout.println("收到app发来的请求包");break;
+			case ReqRep.REQUEST_SEND:BurpExtender.stdout.println("将请求包转发出去");break;
+			case ReqRep.RESPONSE_RECEIVE:BurpExtender.stdout.println("收到服务器发来的请求包");break;
+			case ReqRep.RESPONSE_SEND:BurpExtender.stdout.println("将服务器发来的请求包转发给app");break;
+		}
+
 		BurpExtender.stdout.println("发送："+data);
 		data = Base64.getEncoder().encodeToString(data.getBytes());
 		String result = execCmd(cmd + " "+ flag +" " + data);
@@ -359,8 +366,6 @@ public class GUI {
 
 		Process process = null;
 		BufferedReader bufrIn = null;
-		BufferedReader bufrError = null;
-
 		try {
 			// 执行命令, 返回一个子进程对象（命令在子进程中执行）
 			process = Runtime.getRuntime().exec(cmd, null, null);
@@ -371,12 +376,12 @@ public class GUI {
 
 			bufrIn = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-			BurpExtender.stdout.println("执行结果流："+ Arrays.toString(bufrIn.lines().toArray()));
 			// 读取输出
 			String line;
 			while ((line = bufrIn.readLine()) != null) {
 				result.append(line).append('\n');
 			}
+
 		} catch (IOException | InterruptedException e) {
 			BurpExtender.stdout.println("错误："+result);
 			result.append(e);
@@ -385,13 +390,6 @@ public class GUI {
 			if (bufrIn != null) {
 				try {
 					bufrIn.close();
-				} catch (Exception e) {
-					// nothing
-				}
-			}
-			if (bufrError != null) {
-				try {
-					bufrError.close();
 				} catch (Exception e) {
 					// nothing
 				}
