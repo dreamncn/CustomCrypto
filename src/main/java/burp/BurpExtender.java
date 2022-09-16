@@ -34,9 +34,9 @@ public class BurpExtender implements IBurpExtender,ITab {
 					  + "[+]\n"
 					  + "[+] #####################################\n"
 					  + "[+]    " + BurpExtender.extensionName + " v" + BurpExtender.version +"\n"
-					  + "[+]    anthor: ankio\n"
-					  + "[+]    email:  dream@dreamn.cn\n"
-					  + "[+]    github: http://github.com/dreamncn\n"
+					  + "[+]    author: ankio\n"
+					  + "[+]    email:  admin@ankio.net\n"
+					  + "[+]    github: https://github.com/dreamncn\n"
 					  + "[+] ####################################"
 			  );
 	        }
