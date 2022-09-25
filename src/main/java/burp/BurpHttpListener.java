@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BurpHttpListener implements IHttpListener, IProxyListener {
 
@@ -241,29 +243,7 @@ public class BurpHttpListener implements IHttpListener, IProxyListener {
         return Base64.getEncoder().encodeToString(jsonObject.toJSONString().getBytes());
     }
     private String convertRequestResponse(JSONObject jsonObject,IHttpRequestResponse messageInfo,boolean isResponse){
-
-        if(isResponse){
-            return BurpExtender.gui.convert(jsonObject,true);
-        }else{
-            String requestData = new String(messageInfo.getRequest());
-            IRequestInfo iRequestInfo = BurpExtender.helpers.analyzeRequest(messageInfo.getRequest());
-            iRequestInfo.getBodyOffset();
-            //获取header部分
-            String header = requestData.substring(0, iRequestInfo.getBodyOffset());
-
-            StringBuilder stringBuilder = new StringBuilder();
-            JSONObject request = jsonObject.getJSONObject("request");
-            stringBuilder.append(request.getString("http_version")).append(" ").append(request.getString("state")).append(" ").append(request.getString("state_msg"));
-            header = header.replaceAll(iRequestInfo.getHeaders().get(0),stringBuilder.toString());
-            JSONObject headers =  request.getJSONObject("headers");
-            List<String> rawHeaders = iRequestInfo.getHeaders();
-            for (String rawHeader : rawHeaders) {
-                String key = rawHeader.split(": ")[0];
-                header = header.replaceAll(rawHeader, key + ": " + headers.getString(key));
-            }
-            return header+request.getString("body");
-
-        }
+        return BurpExtender.gui.convert(jsonObject,isResponse);
 
      //   return BurpExtender.gui.convert(jsonObject,isResponse);
     }
@@ -286,6 +266,7 @@ public class BurpHttpListener implements IHttpListener, IProxyListener {
             BurpExtender.stdout.println("收到请求后的数据包（Edited）："+resultData);
             messageInfo.setRequest(resultData.getBytes());
         }catch (Exception exception){
+            exception.printStackTrace();
             BurpExtender.stdout.println("数据解析失败，可能由于解密脚本返回的数据格式不正确。"+exception.getMessage());
         }
 
@@ -308,11 +289,11 @@ public class BurpHttpListener implements IHttpListener, IProxyListener {
             }
             String sendData = convertRequestResponse(jsonObject,messageInfo,false);
 
-            BurpExtender.stdout.println("数组"+Arrays.toString(sendData.getBytes()));
             BurpExtender.stdout.println("即将发送的请求包(Edited)："+sendData);
 
             messageInfo.setRequest(sendData.getBytes());
         }catch (Exception exception){
+            exception.printStackTrace();
             BurpExtender.stdout.println("数据解析失败，可能由于解密脚本返回的数据格式不正确。"+exception.getMessage());
         }
 
@@ -332,6 +313,7 @@ public class BurpHttpListener implements IHttpListener, IProxyListener {
             BurpExtender.stdout.println("收到的响应包(Edited)："+sendData);
             messageInfo.setResponse(sendData.getBytes());
         }catch (Exception exception){
+            exception.printStackTrace();
             BurpExtender.stdout.println("数据解析失败，可能由于解密脚本返回的数据格式不正确。"+exception.getMessage());
         }
 
@@ -352,6 +334,7 @@ public class BurpHttpListener implements IHttpListener, IProxyListener {
             BurpExtender.stdout.println("即将发出的响应包(Edited)："+sendData);
             messageInfo.setResponse(sendData.getBytes());
         }catch (Exception exception){
+            exception.printStackTrace();
             BurpExtender.stdout.println("数据解析失败，可能由于解密脚本返回的数据格式不正确。"+exception.getMessage());
         }
 
