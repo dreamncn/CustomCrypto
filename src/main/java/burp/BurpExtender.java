@@ -11,7 +11,7 @@ public class BurpExtender implements IBurpExtender,ITab {
 	public static IExtensionHelpers helpers;
 	public static PrintWriter stdout;
 	public static PrintWriter stderr;
-	public static GUI gui;
+	public static MainGUI gui;
 	
 	@Override
 	public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
@@ -23,24 +23,21 @@ public class BurpExtender implements IBurpExtender,ITab {
 		callbacks.setExtensionName(extensionName+" "+version);
 		callbacks.registerHttpListener(new BurpHttpListener());
 		callbacks.registerProxyListener(new BurpHttpListener());
-		gui = new GUI();
-		SwingUtilities.invokeLater(new Runnable()
-		{
-	        public void run() {
-	          BurpExtender.callbacks.addSuiteTab(BurpExtender.this);
-	          stdout.println(
-					  "[+] " + BurpExtender.extensionName + " is loaded\n"
-					  + "[+] ^_^\n"
-					  + "[+]\n"
-					  + "[+] #####################################\n"
-					  + "[+]    " + BurpExtender.extensionName + " v" + BurpExtender.version +"\n"
-					  + "[+]    author: ankio\n"
-					  + "[+]    email:  admin@ankio.net\n"
-					  + "[+]    github: https://github.com/dreamncn\n"
-					  + "[+] ####################################"
-			  );
-	        }
-	      });
+		gui = new MainGUI();
+		SwingUtilities.invokeLater(() -> {
+		  BurpExtender.callbacks.addSuiteTab(BurpExtender.this);
+		  stdout.println(
+				  "[+] " + BurpExtender.extensionName + " is loaded\n"
+				  + "[+] ^_^\n"
+				  + "[+]\n"
+				  + "[+] #####################################\n"
+				  + "[+]    " + BurpExtender.extensionName + " v" + BurpExtender.version +"\n"
+				  + "[+]    author: ankio\n"
+				  + "[+]    email:  admin@ankio.net\n"
+				  + "[+]    github: https://github.com/dreamncn\n"
+				  + "[+] ####################################"
+		  );
+		});
 		
 	}
 	
@@ -57,7 +54,7 @@ public class BurpExtender implements IBurpExtender,ITab {
 
 	@Override
 	public Component getUiComponent() {
-		return gui.$$$getRootComponent$$$();
+		return gui.getRoot();
 	}
 
 

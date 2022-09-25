@@ -1,4 +1,18 @@
-## First
+
+<p align="center">
+ <h1 align="center">CustomCrypto</h1>
+ <h3 align="center">🚀 Burp自定义加解密插件</h3></p>
+<p align="center">
+
+<img src="https://img.shields.io/badge/Java-323330?style=for-the-badge&logo=CoffeeScript&logoColor=F7DF1E"/>
+
+ <img src="https://img.shields.io/badge/IntelliJ_IDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white"/>
+ <img src="https://img.shields.io/badge/BurpSuite-E0EFEF?style=for-the-badge&logo=Wireshark&logoColor=000"/>
+ </p>
+
+
+
+## 项目简介
 
 做一些App测试、Web测试、小程序测试的时候，通常会遇到流量加密的问题，对于流量加密自然是要去解密的。
 
@@ -8,16 +22,12 @@
 
 > 上面无论哪种方法都比较麻烦，前者需要不断复制加密字段去解密，后者没法复用，需要重新调用才能执行方法。
 
+于是乎，`CustomCrypto`诞生了。这是一个强大的加解密代理工具，可以将Burp流量代理到任意位置进行加解密。
+
+## 使用
 
 
-## CustomCrypto
-
-这是一个强大的加解密代理工具，可以将Burp流量代理到任意位置进行加解密。
-
-
-## How to use ?
-
-![image-20220417091540426](https://cdn.jsdelivr.net/gh/dreamncn/picBed@master/uPic/2022_04_17_09_15_41_1650158141_1650158141651_LrORml.png)
+## 设置
 
 
 
