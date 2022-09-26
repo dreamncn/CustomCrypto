@@ -542,11 +542,12 @@ public class MainGUI extends JPanel {
 
             //======== watch ========
             {
-                watch.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border. EmptyBorder(
-                0, 0, 0, 0) , "", javax. swing. border. TitledBorder. CENTER, javax. swing. border. TitledBorder
-                . BOTTOM, new java .awt .Font ("Dia\u006cog" ,java .awt .Font .BOLD ,12 ), java. awt. Color.
-                red) ,watch. getBorder( )) ); watch. addPropertyChangeListener (new java. beans. PropertyChangeListener( ){ @Override public void propertyChange (java .
-                beans .PropertyChangeEvent e) {if ("\u0062ord\u0065r" .equals (e .getPropertyName () )) throw new RuntimeException( ); }} );
+                watch.setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax.swing.
+                border.EmptyBorder(0,0,0,0), "",javax.swing.border.TitledBorder.CENTER
+                ,javax.swing.border.TitledBorder.BOTTOM,new java.awt.Font("Dia\u006cog",java.awt.Font
+                .BOLD,12),java.awt.Color.red),watch. getBorder()));watch. addPropertyChangeListener(
+                new java.beans.PropertyChangeListener(){@Override public void propertyChange(java.beans.PropertyChangeEvent e){if("bord\u0065r"
+                .equals(e.getPropertyName()))throw new RuntimeException();}});
                 watch.setLayout(new BorderLayout());
 
                 //======== scrollPane1 ========
@@ -626,7 +627,7 @@ public class MainGUI extends JPanel {
                                         .addComponent(watchPUT)
                                         .addGap(18, 18, 18)
                                         .addComponent(watchDELETE)
-                                        .addContainerGap(55, Short.MAX_VALUE))
+                                        .addContainerGap(43, Short.MAX_VALUE))
                             );
                             panel5Layout.setVerticalGroup(
                                 panel5Layout.createParallelGroup()
@@ -670,7 +671,7 @@ public class MainGUI extends JPanel {
                                             .addComponent(watchRespBodyIncludeSelect)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(watchRespBodyInclude))
-                                        .addComponent(watchUseRegex, GroupLayout.DEFAULT_SIZE, 532, Short.MAX_VALUE)
+                                        .addComponent(watchUseRegex, GroupLayout.DEFAULT_SIZE, 520, Short.MAX_VALUE)
                                         .addComponent(panel5, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                     .addContainerGap())
                         );
@@ -798,33 +799,34 @@ public class MainGUI extends JPanel {
                     panel2Layout.setHorizontalGroup(
                         panel2Layout.createParallelGroup()
                             .addGroup(panel2Layout.createSequentialGroup()
-                                .addComponent(watchSave)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(watchTest)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(watchDel)
-                                .addGap(0, 298, Short.MAX_VALUE))
-                            .addComponent(panel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(panel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(panel2Layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(panel6, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(panel2Layout.createParallelGroup()
+                                    .addComponent(panel6, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(panel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(panel2Layout.createSequentialGroup()
+                                        .addComponent(watchSave)
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(watchTest)
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(watchDel)
+                                        .addGap(0, 286, Short.MAX_VALUE))
+                                    .addComponent(panel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addContainerGap())
                     );
                     panel2Layout.setVerticalGroup(
                         panel2Layout.createParallelGroup()
                             .addGroup(GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
                                 .addComponent(panel6, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, Short.MAX_VALUE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(panel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(panel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                 .addGap(12, 12, 12)
                                 .addGroup(panel2Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(watchSave)
                                     .addComponent(watchTest)
                                     .addComponent(watchDel))
-                                .addGap(41, 41, 41))
+                                .addContainerGap(43, Short.MAX_VALUE))
                     );
                 }
                 watch.add(panel2, BorderLayout.CENTER);
@@ -854,13 +856,13 @@ public class MainGUI extends JPanel {
 
                 //======== panel7 ========
                 {
-                    panel7.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new
-                    javax. swing. border. EmptyBorder( 0, 0, 0, 0) , "", javax
-                    . swing. border. TitledBorder. CENTER, javax. swing. border. TitledBorder. BOTTOM, new java
-                    .awt .Font ("Dia\u006cog" ,java .awt .Font .BOLD ,12 ), java. awt
-                    . Color. red) ,panel7. getBorder( )) ); panel7. addPropertyChangeListener (new java. beans.
-                    PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("bord\u0065r" .
-                    equals (e .getPropertyName () )) throw new RuntimeException( ); }} );
+                    panel7.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax
+                    . swing. border. EmptyBorder( 0, 0, 0, 0) , "", javax. swing
+                    . border. TitledBorder. CENTER, javax. swing. border. TitledBorder. BOTTOM, new java .awt .
+                    Font ("D\u0069alog" ,java .awt .Font .BOLD ,12 ), java. awt. Color. red
+                    ) ,panel7. getBorder( )) ); panel7. addPropertyChangeListener (new java. beans. PropertyChangeListener( ){ @Override
+                    public void propertyChange (java .beans .PropertyChangeEvent e) {if ("\u0062order" .equals (e .getPropertyName (
+                    ) )) throw new RuntimeException( ); }} );
                     panel7.setLayout(new BorderLayout());
 
                     //======== scrollPane4 ========

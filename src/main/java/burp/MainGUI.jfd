@@ -23,13 +23,13 @@ new FormModel {
 					"value": "West"
 				} )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-					"$horizontalGroup": "par l {seq l {comp watchSave:::p::p, space u:::p, comp watchTest:::p::p, space u:::p, comp watchDel:::p::p, space :0:298:x}, comp panel4::l:::x, comp panel3::l:::x, seq l {space :::p, comp panel6:::::x, space :::p}}"
-					"$verticalGroup": "par l {seq t {comp panel6:::p::p, space s:::x, comp panel3:::p::p, space u:::p, comp panel4:::p::p, space :p:12:p, par b {comp watchSave::b:p::p, comp watchTest::b:p::p, comp watchDel::b:p::p}, space :p:41:p}}"
+					"$horizontalGroup": "par l {seq {space :::p, par l {comp panel6::l:::x, comp panel3::l:::x, seq l {comp watchSave:::p::p, space u:::p, comp watchTest:::p::p, space u:::p, comp watchDel:::p::p, space :0:286:x}, comp panel4::l:::x}, space :::p}}"
+					"$verticalGroup": "par l {seq t {comp panel6:::p::p, space :::p, comp panel3:::p::p, space :::p, comp panel4:::p::p, space :p:12:p, par b {comp watchSave::b:p::p, comp watchTest::b:p::p, comp watchDel::b:p::p}, space ::43:x}}"
 				} ) {
 					name: "panel2"
 					"border": new javax.swing.border.EmptyBorder( 20, 20, 20, 20 )
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-						"$horizontalGroup": "par l {seq {space :::p, par l {seq l {comp watchUrlIncludeSelect:::p::p, space :::p, comp watchUrlInclude:::::x}, seq l {comp watchReqHeadIncludeSelect:::p::p, space :::p, comp watchReqHeadInclude:::::x}, seq l {comp watchReqBodyIncludeSelect:::p::p, space :::p, comp watchReqBodyInclude:::::x}, seq l {comp watchRespHeadIncludeSelect:::p::p, space :::p, comp watchRespHeadInclude:::::x}, seq l {comp watchRespBodyIncludeSelect:::p::p, space :::p, comp watchRespBodyInclude:::::x}, comp watchUseRegex::l::532:x, comp panel5::l:::x}, space :::p}}"
+						"$horizontalGroup": "par l {seq {space :::p, par l {seq l {comp watchUrlIncludeSelect:::p::p, space :::p, comp watchUrlInclude:::::x}, seq l {comp watchReqHeadIncludeSelect:::p::p, space :::p, comp watchReqHeadInclude:::::x}, seq l {comp watchReqBodyIncludeSelect:::p::p, space :::p, comp watchReqBodyInclude:::::x}, seq l {comp watchRespHeadIncludeSelect:::p::p, space :::p, comp watchRespHeadInclude:::::x}, seq l {comp watchRespBodyIncludeSelect:::p::p, space :::p, comp watchRespBodyInclude:::::x}, comp watchUseRegex::l::520:x, comp panel5::l:::x}, space :::p}}"
 						"$verticalGroup": "par l {seq t {space :::p, comp panel5:::p::p, space ::12:x, par b {comp watchUrlIncludeSelect::b:p::p, comp watchUrlInclude::b:p::p}, space :::p, par b {comp watchReqHeadIncludeSelect::b:p::p, comp watchReqHeadInclude::b:p::p}, space :::p, par b {comp watchReqBodyIncludeSelect::b:p::p, comp watchReqBodyInclude::b:p::p}, space :::p, par b {comp watchRespHeadIncludeSelect::b:p::p, comp watchRespHeadInclude::b:p::p}, space :::p, par b {comp watchRespBodyIncludeSelect::b:p::p, comp watchRespBodyInclude::b:p::p}, space :::p, comp watchUseRegex:::p::p, space :::p}}"
 					} ) {
 						name: "panel3"
@@ -74,7 +74,7 @@ new FormModel {
 							"text": "所有匹配规则采用正则模式"
 						} )
 						add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-							"$horizontalGroup": "par l {seq l {space :::p, comp watchGET:::p::p, space s:::p, comp watchPOST:::p::p, space s:::p, comp watchOPTIONS:::p::p, space s:::p, comp watchHEAD:::p::p, space s:::p, comp watchPUT:::p::p, space s:::p, comp watchDELETE:::p::p, space ::55:x}}"
+							"$horizontalGroup": "par l {seq l {space :::p, comp watchGET:::p::p, space s:::p, comp watchPOST:::p::p, space s:::p, comp watchOPTIONS:::p::p, space s:::p, comp watchHEAD:::p::p, space s:::p, comp watchPUT:::p::p, space s:::p, comp watchDELETE:::p::p, space ::43:x}}"
 							"$verticalGroup": "par l {seq l {space :::p, par b {comp watchGET::b:p::p, comp watchPOST::b:p::p, comp watchOPTIONS::b:p::p, comp watchHEAD::b:p::p, comp watchPUT::b:p::p, comp watchDELETE::b:p::p}, space :::x}}"
 						} ) {
 							name: "panel5"
