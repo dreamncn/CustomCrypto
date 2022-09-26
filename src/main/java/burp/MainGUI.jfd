@@ -9,29 +9,28 @@ new FormModel {
 				name: "watch"
 				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 					name: "scrollPane1"
-					"maximumSize": &Dimension0 new java.awt.Dimension( 200, 32767 )
+					"maximumSize": new java.awt.Dimension( 200, 32767 )
 					add( new FormComponent( "javax.swing.JList" ) {
 						name: "watchList"
-						"model": &DefaultListModel0 new javax.swing.DefaultListModel {
-							addElement( "监控Gzip自动解压" )
-							addElement( "解密某安卓App" )
-							addElement( "超级无敌长的字符串超级无敌长的字符串超级无敌长的字符串超级无敌长的字符串超级无敌长的字符串超级无敌长的字符串超级无敌长的字符串超级无敌长的字符串超级无敌长的字符串超级无敌长的字符串超级无敌长的字符串超级无敌长的字符串" )
-						}
-						"maximumSize": &Dimension1 new java.awt.Dimension( 200, 62 )
+						"maximumSize": new java.awt.Dimension( 200, 62 )
 						"fixedCellWidth": 200
+						auxiliary() {
+							"JavaCodeGenerator.typeParameters": "String"
+						}
 						addEvent( new FormEvent( "javax.swing.event.ListSelectionListener", "valueChanged", "watchListValueChanged", true ) )
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "West"
 				} )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-					"$horizontalGroup": "par l {seq l {space :p:27:p, par l {comp panel3:::::x, seq {comp label7:::p::p, space :6:6:p, comp watchName:::p:381:p, space ::27:x}, seq l {comp watchSave:::p::p, space u:::p, comp watchTest:::p::p, space u:::p, comp watchDel:::p::p, space :0:221:x}, comp panel4::l:::x}}}"
-					"$verticalGroup": "par l {seq l {space :p:18:p, par l {seq l {space :7:7:p, comp label7:::p::p}, comp watchName:::p::p}, space u:::p, comp panel3:::p:235:p, space u:::p, comp panel4:::p::p, space s:::p, par b {comp watchSave::b:p::p, comp watchTest::b:p::p, comp watchDel::b:p::p}, space ::10:x}}"
+					"$horizontalGroup": "par l {seq l {comp watchSave:::p::p, space u:::p, comp watchTest:::p::p, space u:::p, comp watchDel:::p::p, space :0:298:x}, comp panel4::l:::x, comp panel3::l:::x, seq l {space :::p, comp panel6:::::x, space :::p}}"
+					"$verticalGroup": "par l {seq t {comp panel6:::p::p, space s:::x, comp panel3:::p::p, space u:::p, comp panel4:::p::p, space :p:12:p, par b {comp watchSave::b:p::p, comp watchTest::b:p::p, comp watchDel::b:p::p}, space :p:41:p}}"
 				} ) {
 					name: "panel2"
+					"border": new javax.swing.border.EmptyBorder( 20, 20, 20, 20 )
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-						"$horizontalGroup": "par l {seq {space :::p, par l {seq l {comp watchUrlIncludeSelect:::p::p, space :::p, comp watchUrlInclude:::::x}, seq l {comp watchReqHeadIncludeSelect:::p::p, space :::p, comp watchReqHeadInclude:::::x}, seq l {comp watchReqBodyIncludeSelect:::p::p, space :::p, comp watchReqBodyInclude:::::x}, seq l {comp watchRespHeadIncludeSelect:::p::p, space :::p, comp watchRespHeadInclude:::::x}, seq l {comp watchRespBodyIncludeSelect:::p::p, space :::p, comp watchRespBodyInclude:::::x}, comp watchUseRegex::l::455:x}, space :::p}}"
-						"$verticalGroup": "par l {seq l {space :::p, par b {comp watchUrlIncludeSelect::b:p::p, comp watchUrlInclude::b:p::p}, space :::p, par b {comp watchReqHeadIncludeSelect::b:p::p, comp watchReqHeadInclude::b:p::p}, space :::p, par b {comp watchReqBodyIncludeSelect::b:p::p, comp watchReqBodyInclude::b:p::p}, space :::p, par b {comp watchRespHeadIncludeSelect::b:p::p, comp watchRespHeadInclude::b:p::p}, space :::p, par b {comp watchRespBodyIncludeSelect::b:p::p, comp watchRespBodyInclude::b:p::p}, space :::p, comp watchUseRegex:::p::p, space :::x}}"
+						"$horizontalGroup": "par l {seq {space :::p, par l {seq l {comp watchUrlIncludeSelect:::p::p, space :::p, comp watchUrlInclude:::::x}, seq l {comp watchReqHeadIncludeSelect:::p::p, space :::p, comp watchReqHeadInclude:::::x}, seq l {comp watchReqBodyIncludeSelect:::p::p, space :::p, comp watchReqBodyInclude:::::x}, seq l {comp watchRespHeadIncludeSelect:::p::p, space :::p, comp watchRespHeadInclude:::::x}, seq l {comp watchRespBodyIncludeSelect:::p::p, space :::p, comp watchRespBodyInclude:::::x}, comp watchUseRegex::l::532:x, comp panel5::l:::x}, space :::p}}"
+						"$verticalGroup": "par l {seq t {space :::p, comp panel5:::p::p, space ::12:x, par b {comp watchUrlIncludeSelect::b:p::p, comp watchUrlInclude::b:p::p}, space :::p, par b {comp watchReqHeadIncludeSelect::b:p::p, comp watchReqHeadInclude::b:p::p}, space :::p, par b {comp watchReqBodyIncludeSelect::b:p::p, comp watchReqBodyInclude::b:p::p}, space :::p, par b {comp watchRespHeadIncludeSelect::b:p::p, comp watchRespHeadInclude::b:p::p}, space :::p, par b {comp watchRespBodyIncludeSelect::b:p::p, comp watchRespBodyInclude::b:p::p}, space :::p, comp watchUseRegex:::p::p, space :::p}}"
 					} ) {
 						name: "panel3"
 						"border": new javax.swing.border.TitledBorder( "监控参数" )
@@ -74,31 +73,57 @@ new FormModel {
 							name: "watchUseRegex"
 							"text": "所有匹配规则采用正则模式"
 						} )
+						add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+							"$horizontalGroup": "par l {seq l {space :::p, comp watchGET:::p::p, space s:::p, comp watchPOST:::p::p, space s:::p, comp watchOPTIONS:::p::p, space s:::p, comp watchHEAD:::p::p, space s:::p, comp watchPUT:::p::p, space s:::p, comp watchDELETE:::p::p, space ::55:x}}"
+							"$verticalGroup": "par l {seq l {space :::p, par b {comp watchGET::b:p::p, comp watchPOST::b:p::p, comp watchOPTIONS::b:p::p, comp watchHEAD::b:p::p, comp watchPUT::b:p::p, comp watchDELETE::b:p::p}, space :::x}}"
+						} ) {
+							name: "panel5"
+							"border": new javax.swing.border.TitledBorder( "请求类型" )
+							add( new FormComponent( "javax.swing.JCheckBox" ) {
+								name: "watchGET"
+								"text": "GET"
+							} )
+							add( new FormComponent( "javax.swing.JCheckBox" ) {
+								name: "watchPOST"
+								"text": "POST"
+							} )
+							add( new FormComponent( "javax.swing.JCheckBox" ) {
+								name: "watchOPTIONS"
+								"text": "OPTIONS"
+							} )
+							add( new FormComponent( "javax.swing.JCheckBox" ) {
+								name: "watchHEAD"
+								"text": "HEAD"
+							} )
+							add( new FormComponent( "javax.swing.JCheckBox" ) {
+								name: "watchPUT"
+								"text": "PUT"
+							} )
+							add( new FormComponent( "javax.swing.JCheckBox" ) {
+								name: "watchDELETE"
+								"text": "DELETE"
+							} )
+						} )
 					} )
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-						"$horizontalGroup": "par l {seq {space :::p, par l {seq l {comp watchScriptSelect:::p::p, space :::p, comp watchScriptList::::430:x}, seq l {comp watchScriptCustomSelect:::p::p, space :::p, comp watchCustom::::335:x}}, space :::p}}"
-						"$verticalGroup": "par l {seq {par l {seq l {space :::p, comp watchScriptSelect:::p::p}, comp watchScriptList::l:p::p}, space u:::p, par b {comp watchScriptCustomSelect::b:p::p, comp watchCustom::b:p::p}, space :0:12:x}}"
+						"$horizontalGroup": "par l {seq l {space :::p, par l {seq l {comp label8:::p::p, space :::p, comp watchCustom::::461:x}, seq l {comp label7:::p::p, space :::p, comp watchName::::461:x}}, space :::p}}"
+						"$verticalGroup": "par l {seq {space :p:8:p, par b {comp label7::b:p::p, comp watchName::b:p::p}, space u:::p, par b {comp label8::b:p::p, comp watchCustom::b:p::p}, space :0:4:x}}"
 					} ) {
 						name: "panel4"
 						"border": new javax.swing.border.TitledBorder( "脚本配置" )
-						add( new FormComponent( "javax.swing.JRadioButton" ) {
-							name: "watchScriptSelect"
-							"$buttonGroup": new FormReference( "buttonGroup1" )
-						} )
-						add( new FormComponent( "javax.swing.JComboBox" ) {
-							name: "watchScriptList"
-							"model": new javax.swing.DefaultComboBoxModel {
-								selectedItem: "xxx解密脚本"
-								addElement( "xxx解密脚本" )
-							}
-						} )
-						add( new FormComponent( "javax.swing.JRadioButton" ) {
-							name: "watchScriptCustomSelect"
-							"text": "自定义命令执行"
-							"$buttonGroup": new FormReference( "buttonGroup1" )
-						} )
 						add( new FormComponent( "javax.swing.JTextField" ) {
 							name: "watchCustom"
+						} )
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "label8"
+							"text": "执行命令："
+						} )
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "label7"
+							"text": "配置名称："
+						} )
+						add( new FormComponent( "javax.swing.JTextField" ) {
+							name: "watchName"
 						} )
 					} )
 					add( new FormComponent( "javax.swing.JButton" ) {
@@ -117,12 +142,23 @@ new FormModel {
 						"text": "删除"
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "watchDel", true ) )
 					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label7"
-						"text": "配置名称："
-					} )
-					add( new FormComponent( "javax.swing.JTextField" ) {
-						name: "watchName"
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+						"$horizontalGroup": "par l {seq l {space :p:20:p, comp enableScript:::p::p, space s:::p, comp disableScript:::p::p, space ::396:x}}"
+						"$verticalGroup": "par l {seq {space :::p, par b {comp disableScript::b:p::p, comp enableScript::b:p::p}, space ::7:x}}"
+					} ) {
+						name: "panel6"
+						"border": new javax.swing.border.TitledBorder( "脚本状态" )
+						add( new FormComponent( "javax.swing.JRadioButton" ) {
+							name: "enableScript"
+							"text": "启用"
+							"$buttonGroup": new FormReference( "buttonGroup1" )
+							"selected": true
+						} )
+						add( new FormComponent( "javax.swing.JRadioButton" ) {
+							name: "disableScript"
+							"text": "禁用"
+							"$buttonGroup": new FormReference( "buttonGroup1" )
+						} )
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "Center"
@@ -131,109 +167,20 @@ new FormModel {
 				"title": "监控配置"
 			} )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
-				name: "scripts"
-				auxiliary() {
-					"JavaCodeGenerator.variableName": "main"
-				}
-				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-					"$horizontalGroup": "par l {seq {space :::p, par l {seq {comp panel6:::p::p, space :21:39:x}, seq {par l {seq {space :6:6:p, par l {seq l {comp scriptSave:::p::p, space u:::p, comp scriptDel:::p::p}, par t:l::p {seq l {comp e:::p::p, space :::p, comp scriptProjectMain:::::x}, seq {comp label3:::p::p, space :::p, comp scriptName:::p:381:p}}}}, comp label1::l:p::p}, space :0:42:x}}}}"
-					"$verticalGroup": "par l {seq l {space :::p, comp panel6:::p::p, space u:::p, par b {comp scriptName::b:p::p, comp label3::b:p::p}, space s:::p, par b {comp e::b:p::p, comp scriptProjectMain::b:p::p}, space u:::p, par b {comp scriptSave::b:p::p, comp scriptDel::b:p::p}, space s:::p, comp label1:::p::p, space ::193:x}}"
-				} ) {
-					name: "panel5"
-					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-						"$horizontalGroup": "par l {seq t {space ::13:x, par l {seq l {comp scriptCmdSelect:::p:25:p, space :::p, comp scriptCmd:::p:108:p}, seq l {comp scriptCmdCustomSelect:::p::p, space :::p, comp scriptCmdCustom:::p:336:p}}, space :::p}}"
-						"$verticalGroup": "par l {seq l {space :::p, par l {comp scriptCmd:::p::p, comp scriptCmdSelect:::p:30:p}, space u:::p, par b {comp scriptCmdCustomSelect::b:p::p, comp scriptCmdCustom::b:p::p}, space :::x}}"
-					} ) {
-						name: "panel6"
-						"border": new javax.swing.border.TitledBorder( "执行命令" )
-						add( new FormComponent( "javax.swing.JComboBox" ) {
-							name: "scriptCmd"
-							"model": new javax.swing.DefaultComboBoxModel {
-								selectedItem: "python"
-								addElement( "python" )
-								addElement( "java" )
-								addElement( "node" )
-								addElement( "php" )
-							}
-						} )
-						add( new FormComponent( "javax.swing.JRadioButton" ) {
-							name: "scriptCmdSelect"
-							"$buttonGroup": new FormReference( "buttonGroup2" )
-						} )
-						add( new FormComponent( "javax.swing.JRadioButton" ) {
-							name: "scriptCmdCustomSelect"
-							"text": "自定义命令"
-							"$buttonGroup": new FormReference( "buttonGroup2" )
-						} )
-						add( new FormComponent( "javax.swing.JTextField" ) {
-							name: "scriptCmdCustom"
-						} )
-					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label3"
-						"text": "脚本名称："
-					} )
-					add( new FormComponent( "javax.swing.JTextField" ) {
-						name: "scriptName"
-					} )
-					add( new FormComponent( "javax.swing.JButton" ) {
-						name: "scriptSave"
-						"text": "保存"
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "scriptSave", true ) )
-					} )
-					add( new FormComponent( "javax.swing.JButton" ) {
-						name: "scriptDel"
-						"text": "删除"
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "scriptDel", true ) )
-					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "e"
-						"text": "脚本文件："
-					} )
-					add( new FormComponent( "javax.swing.JTextField" ) {
-						name: "scriptProjectMain"
-					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label1"
-						"text": "<html>个人建议： 将所有脚本放到专有目录下以备不时之需。"
-					} )
-				}, new FormLayoutConstraints( class java.lang.String ) {
-					"value": "Center"
-				} )
-				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
-					name: "scrollPane2"
-					"maximumSize": #Dimension0
-					add( new FormComponent( "javax.swing.JList" ) {
-						name: "scriptList"
-						"model": #DefaultListModel0
-						"maximumSize": #Dimension1
-						"fixedCellWidth": 200
-						addEvent( new FormEvent( "javax.swing.event.ListSelectionListener", "valueChanged", "scriptListValueChanged", true ) )
-					} )
-				}, new FormLayoutConstraints( class java.lang.String ) {
-					"value": "Before"
-				} )
-			}, new FormLayoutConstraints( null ) {
-				"title": "脚本编辑"
-			} )
-			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 				name: "Setting"
-				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
-					name: "scrollPane3"
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label6"
-						"text": "<html><h1>监控配置</h1>\n&nbsp;&nbsp; 该部分主要判断哪些情况下的请求包/响应包需要脚本介入处理。\n<h2>监控参数</h2>\n&nbsp; &nbsp; 此处需要告诉burp，需要根据什么规则进行监控。勾选【所有匹配规则采用正则模式】则会将监控参数以正则的形式进行匹配。\n<h2>脚本配置</h2>\n&nbsp;&nbsp; 此处可选【内置脚本】和【自定义脚本】。内置脚本就是在【脚本编辑】中配置好的脚本。【自定义脚本】就是没有在【脚本编辑】中配置好脚本。\n&nbsp;&nbsp; 【自定义脚本】一般为【python xxx.py】等形式。\n<h2>测试</h2>\n&nbsp;&nbsp; 执行模拟测试，模拟burp真实抓包场景测试。\n<h1>脚本编辑</h1>\n&nbsp;&nbsp; 这一部分主要存储一些可以进行复用的脚本，例如Gzip自动解压脚本等。\n<h2>执行命令</h2>\n&nbsp;&nbsp; 第一个选项是默认使用那个命令来执行脚本，如果你需要执行脚本的命令不在选项卡中，你可以使用第二个选项指定执行的命令。\n<h2>脚本名称</h2>\n&nbsp;&nbsp; 就是这个脚本保存的名字\n<h2>脚本项目文件夹</h2>\n&nbsp;&nbsp; 就是脚本所在的文件夹，通常建议为每个脚本配置一个专门的文件夹。\n<h2>脚本项目主文件</h2>\n&nbsp;&nbsp; 就是运行的脚本文件<br/>\n"
-						"border": new javax.swing.border.EmptyBorder( 10, 10, 10, 10 )
-					} )
+				"border": new javax.swing.border.EmptyBorder( 20, 20, 20, 20 )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label1"
+					"text": "<Html><h1>CustomCrypto</h1><h2>burp自定义加解密插件</h2><h3>Github: https://github.com/dreamncn/CustomCrypto</h3><h3>Site: https://ankio.net</h3><h3>Powered by Ankio 2022.</h3>"
 				}, new FormLayoutConstraints( class java.lang.String ) {
-					"value": "Center"
+					"value": "North"
 				} )
 			}, new FormLayoutConstraints( null ) {
-				"title": "帮助"
+				"title": "关于"
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 710, 505 )
+			"size": new java.awt.Dimension( 800, 640 )
 		} )
 		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 			name: "dialog1"
@@ -343,19 +290,13 @@ new FormModel {
 				"value": "North"
 			} )
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 0, 515 )
+			"location": new java.awt.Point( 5, 700 )
 			"size": new java.awt.Dimension( 1225, 395 )
 		} )
 		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
 			name: "buttonGroup1"
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 0, 926 )
-		} )
-		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
-			name: "buttonGroup2"
-		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 0, 986 )
+			"location": new java.awt.Point( 0, 1111 )
 		} )
 	}
 }
-

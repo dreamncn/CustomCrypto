@@ -6,7 +6,7 @@ import javax.swing.*;
  * 测试GUI,需要debug=true
  */
 public class Main {
-    public static boolean debug = false;
+    public static boolean debug = true;
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {

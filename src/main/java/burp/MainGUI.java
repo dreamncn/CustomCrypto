@@ -8,21 +8,22 @@ package burp;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Iterator;
-import javax.swing.event.*;
 
 /**
  * 插件的GUI实现
  * @author ankio
  */
 public class MainGUI extends JPanel {
+    
     /**
      * 构造函数
      */
@@ -31,95 +32,41 @@ public class MainGUI extends JPanel {
         initComponents();
         //初始化数据
         initData();
+
     }
     private JSONArray runListData = new JSONArray();
-    private JSONArray saveListData = new JSONArray();
-
+    
     private int selected = -1;
 
     /**
      * 初始化数据
      */
     private void initData(){
-        emptyScriptList();
         emptyWatch();
         //监控配置
         runListData = new JSONArray();
-        saveListData = new JSONArray();
+      
         //加载正在运行的
         JSONArray jsonArray = Storage.read(Storage.RUN_LIST);
 
         ArrayList<String> arrayList = new ArrayList<>();
 
-
+        
         for (int i = 0; i < jsonArray.size() ; i++) {
             JSONObject jsonObject =  jsonArray.getJSONObject(i);
-            arrayList.add(jsonObject.getString("title"));
-            jsonObject.put("id",i);
+            if(jsonObject.getBoolean("use")){
+                arrayList.add("已激活 • "+jsonObject.getString("title"));
+            }else{
+                arrayList.add("禁用 • "+jsonObject.getString("title"));
+            }
             runListData.add(jsonObject);
         }
+        
+
         watchList.setListData(arrayList.toArray(new String[0]));
-        jsonArray = Storage.read(Storage.SAVE_LIST);
-        arrayList = new ArrayList<>();
-        for (int i = 0; i < jsonArray.size() ; i++) {
-            JSONObject jsonObject =  jsonArray.getJSONObject(i);
-            arrayList.add(jsonObject.getString("title"));
-            jsonObject.put("id",i);
-            saveListData.add(jsonObject);
-        }
-        scriptList.setListData(arrayList.toArray(new String[0]));
-
-        class BoxModel implements ComboBoxModel<String>{
-            String item=null;
-            public void setSelectedItem(Object anItem){
-                item=(String)anItem;
-            }
-            public Object getSelectedItem(){
-                return item;
-            }
-
-            @Override
-            public int getSize() {
-                return saveListData.size();
-            }
-
-            @Override
-            public String getElementAt(int index) {
-                if(index+1 > saveListData.size()) return "";
-                return saveListData.getJSONObject(index).getString("title");
-            }
-
-            @Override
-            public void addListDataListener(ListDataListener l) {
-
-            }
-
-            @Override
-            public void removeListDataListener(ListDataListener l) {
-
-            }
-        }
-
-        //加载保存的
-        ComboBoxModel<String> comboBoxModel = new BoxModel();
-        watchScriptList.setModel(comboBoxModel);
-
-        //脚本编辑
-
     }
 
-    private void emptyScriptList() {
-        saveSelect = -1;
-        scriptName.setText("");
-        scriptProjectMain.setText("");
-
-        scriptCmdCustom.setText("");
-
-        scriptCmdSelect.setSelected(false);
-        scriptCmdCustomSelect.setSelected(false);
-
-        scriptCmd.setSelectedIndex(-1);
-    }
+   
 
     /**
      * 获取根View
@@ -154,12 +101,17 @@ public class MainGUI extends JPanel {
         watchRespBodyIncludeSelect.setSelected(data.getBoolean("watchRespBodyIncludeSelect"));
 
         watchUseRegex.setSelected(data.getBoolean("watchUseRegex"));
-        
-        watchScriptSelect.setSelected(data.getBoolean("watchScriptSelect"));
-        watchScriptCustomSelect.setSelected(data.getBoolean("watchScriptCustomSelect"));
 
-        if(data.getInteger("id")+1<saveListData.size())
-        watchScriptList.setSelectedIndex(data.getInteger("id"));
+        enableScript.setSelected(data.getBoolean("enableScript"));
+        disableScript.setSelected(data.getBoolean("disableScript"));
+
+
+        watchGET.setSelected(data.getBoolean("watchGET"));
+        watchPOST.setSelected(data.getBoolean("watchPOST"));
+        watchOPTIONS.setSelected(data.getBoolean("watchOPTIONS"));
+        watchHEAD.setSelected(data.getBoolean("watchHEAD"));
+        watchPUT.setSelected(data.getBoolean("watchPUT"));
+        watchDELETE.setSelected(data.getBoolean("watchDELETE"));
         
     }
 
@@ -184,11 +136,16 @@ public class MainGUI extends JPanel {
         watchRespBodyIncludeSelect.setSelected(false);
 
         watchUseRegex.setSelected(false);
+        enableScript.setSelected(true);
+        disableScript.setSelected(false);
 
-        watchScriptSelect.setSelected(false);
-        watchScriptCustomSelect.setSelected(false);
 
-        watchScriptList.setSelectedIndex(-1);
+        watchGET.setSelected(false);
+        watchPOST.setSelected(false);
+        watchOPTIONS.setSelected(false);
+        watchHEAD.setSelected(false);
+        watchPUT.setSelected(false);
+        watchDELETE.setSelected(false);
 
     }
 
@@ -226,16 +183,8 @@ public class MainGUI extends JPanel {
             return null;
         }
 
-        if(!watchScriptSelect.isSelected()&&!watchScriptCustomSelect.isSelected()){
-            showMsg("请选择脚本执行命令！");
-            return null;
-        }
-        if(watchScriptSelect.isSelected()&&watchScriptList.getSelectedIndex()==-1){
-            showMsg("请选择一个脚本执行！");
-            return null;
-        }
-        if(watchScriptCustomSelect.isSelected()&&"".equals(watchCustom.getText())){
-            showMsg("自定义脚本需要填写具体的执行命令！");
+        if("".equals(watchCustom.getText())){
+            showMsg("需要填写具体的执行命令！");
             return null;
         }
         jsonObject.put("title",title);
@@ -253,19 +202,21 @@ public class MainGUI extends JPanel {
         jsonObject.put("watchRespHeadIncludeSelect",watchRespHeadIncludeSelect.isSelected());
         jsonObject.put("watchRespBodyIncludeSelect",watchRespBodyIncludeSelect.isSelected());
         jsonObject.put("watchUseRegex",watchUseRegex.isSelected());
-        jsonObject.put("watchScriptSelect",watchScriptSelect.isSelected());
-        jsonObject.put("watchScriptCustomSelect",watchScriptCustomSelect.isSelected());
-       
-        String command = "";
-        if(watchScriptCustomSelect.isSelected()){
-            command = watchCustom.getText();
-        }else{
-          JSONObject select =  saveListData.getJSONObject(watchScriptList.getSelectedIndex());
-          command = select.getString("command");
-        }
         
-        jsonObject.put("command",command);
+        
+        jsonObject.put("command",watchCustom.getText());
 
+        jsonObject.put("enableScript",enableScript.isSelected());
+        jsonObject.put("disableScript",disableScript.isSelected());
+
+
+        jsonObject.put("watchGET",watchGET.isSelected());
+        jsonObject.put("watchPOST",watchPOST.isSelected());
+        jsonObject.put("watchOPTIONS",watchOPTIONS.isSelected());
+        jsonObject.put("watchHEAD",watchHEAD.isSelected());
+        jsonObject.put("watchPUT",watchPUT.isSelected());
+        jsonObject.put("watchDELETE",watchDELETE.isSelected());
+        jsonObject.put("use",enableScript.isSelected());
         return jsonObject;
     }
     private void watchSave(ActionEvent e) {
@@ -517,81 +468,6 @@ public class MainGUI extends JPanel {
         }
     }
 
-    private int saveSelect = -1;
-    private void scriptListValueChanged(ListSelectionEvent e) {
-        if (scriptList.getSelectedIndex() == -1) return;
-        int index = scriptList.getSelectedIndex();
-        if(index>saveListData.size())return;
-        saveSelect = index;
-        JSONObject data =  saveListData.getJSONObject(index);
-        scriptName.setText(data.getString("title"));
-        scriptProjectMain.setText(data.getString("scriptProjectMain"));
-        scriptCmdCustom.setText(data.getString("scriptCmdCustom"));
-        scriptCmdSelect.setSelected(data.getBoolean("scriptCmdSelect"));
-        scriptCmdCustomSelect.setSelected(data.getBoolean("scriptCmdCustomSelect"));
-        scriptCmd.setSelectedIndex(data.getInteger("scriptCmd"));
-    }
-
-    private void scriptDel(ActionEvent e) {
-        if(saveSelect!=-1){
-            //新增
-            saveListData.remove(saveSelect);
-        }
-        Storage.write(Storage.SAVE_LIST,saveListData);
-        initData();
-    }
-
-    private void scriptSave(ActionEvent e) {
-        JSONObject jsonObject = new JSONObject();
-        String title = scriptName.getText();
-        if("".equals(title)){
-            showMsg("配置名称不允许为空！");
-            return;
-        }
-        if(!scriptCmdSelect.isSelected()&&!scriptCmdCustomSelect.isSelected()){
-            showMsg("请选择执行命令！");
-            return ;
-        }
-        if(scriptCmdSelect.isSelected()&&scriptCmd.getSelectedIndex()==-1){
-            showMsg("请选择一个执行命令！");
-            return ;
-        }
-        if(scriptCmdCustomSelect.isSelected()&&"".equals(scriptCmdCustom.getText())){
-            showMsg("自定义执行命令需要填写具体的命令行路径！");
-            return ;
-        }
-
-        jsonObject.put("title",scriptName.getText());
-
-        jsonObject.put("scriptProjectMain",scriptProjectMain.getText());
-
-        jsonObject.put("scriptCmdCustom",scriptCmdCustom.getText());
-        jsonObject.put("scriptCmdSelect",scriptCmdSelect.isSelected());
-        jsonObject.put("scriptCmdCustomSelect",scriptCmdCustomSelect.isSelected());
-        jsonObject.put("scriptCmd",scriptCmd.getSelectedIndex());
-
-
-        String command = "";
-        if(scriptCmdSelect.isSelected()){
-            String[] strings = new String[]{"python","java","node" ,"php"};
-            command = strings[scriptCmd.getSelectedIndex()];
-        }else{
-            command = scriptCmdCustom.getText();
-        }
-
-        jsonObject.put("command",command+" "+scriptProjectMain.getText());
-        if(saveSelect==-1){
-            //新增
-            saveListData.add(jsonObject);
-        }else{
-            //更新
-            saveListData.set(saveSelect,jsonObject);
-        }
-
-        Storage.write(Storage.SAVE_LIST,saveListData);
-        initData();
-
-    }
 
     public JSONArray getUsageList() {
         return runListData;
@@ -617,35 +493,26 @@ public class MainGUI extends JPanel {
         watchRespBodyIncludeSelect = new JCheckBox();
         watchRespBodyInclude = new JTextField();
         watchUseRegex = new JCheckBox();
+        panel5 = new JPanel();
+        watchGET = new JCheckBox();
+        watchPOST = new JCheckBox();
+        watchOPTIONS = new JCheckBox();
+        watchHEAD = new JCheckBox();
+        watchPUT = new JCheckBox();
+        watchDELETE = new JCheckBox();
         panel4 = new JPanel();
-        watchScriptSelect = new JRadioButton();
-        watchScriptList = new JComboBox<>();
-        watchScriptCustomSelect = new JRadioButton();
         watchCustom = new JTextField();
+        label8 = new JLabel();
+        label7 = new JLabel();
+        watchName = new JTextField();
         watchSave = new JButton();
         watchTest = new JButton();
         watchDel = new JButton();
-        label7 = new JLabel();
-        watchName = new JTextField();
-        main = new JPanel();
-        panel5 = new JPanel();
         panel6 = new JPanel();
-        scriptCmd = new JComboBox<>();
-        scriptCmdSelect = new JRadioButton();
-        scriptCmdCustomSelect = new JRadioButton();
-        scriptCmdCustom = new JTextField();
-        label3 = new JLabel();
-        scriptName = new JTextField();
-        scriptSave = new JButton();
-        scriptDel = new JButton();
-        e = new JLabel();
-        scriptProjectMain = new JTextField();
-        label1 = new JLabel();
-        scrollPane2 = new JScrollPane();
-        scriptList = new JList<>();
+        enableScript = new JRadioButton();
+        disableScript = new JRadioButton();
         Setting = new JPanel();
-        scrollPane3 = new JScrollPane();
-        label6 = new JLabel();
+        label1 = new JLabel();
         dialog1 = new JDialog();
         tab = new JTabbedPane();
         panel7 = new JPanel();
@@ -675,13 +542,11 @@ public class MainGUI extends JPanel {
 
             //======== watch ========
             {
-                watch.setBorder ( new javax . swing. border .CompoundBorder ( new javax . swing. border .TitledBorder ( new javax
-                . swing. border .EmptyBorder ( 0, 0 ,0 , 0) ,  "" , javax. swing
-                .border . TitledBorder. CENTER ,javax . swing. border .TitledBorder . BOTTOM, new java. awt .
-                Font ( "D\u0069alog", java .awt . Font. BOLD ,12 ) ,java . awt. Color .red
-                ) ,watch. getBorder () ) ); watch. addPropertyChangeListener( new java. beans .PropertyChangeListener ( ){ @Override
-                public void propertyChange (java . beans. PropertyChangeEvent e) { if( "\u0062order" .equals ( e. getPropertyName (
-                ) ) )throw new RuntimeException( ) ;} } );
+                watch.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border. EmptyBorder(
+                0, 0, 0, 0) , "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn", javax. swing. border. TitledBorder. CENTER, javax. swing. border. TitledBorder
+                . BOTTOM, new java .awt .Font ("Dia\u006cog" ,java .awt .Font .BOLD ,12 ), java. awt. Color.
+                red) ,watch. getBorder( )) ); watch. addPropertyChangeListener (new java. beans. PropertyChangeListener( ){ @Override public void propertyChange (java .
+                beans .PropertyChangeEvent e) {if ("\u0062ord\u0065r" .equals (e .getPropertyName () )) throw new RuntimeException( ); }} );
                 watch.setLayout(new BorderLayout());
 
                 //======== scrollPane1 ========
@@ -689,17 +554,6 @@ public class MainGUI extends JPanel {
                     scrollPane1.setMaximumSize(new Dimension(200, 32767));
 
                     //---- watchList ----
-                    watchList.setModel(new AbstractListModel<String>() {
-                        String[] values = {
-                            "\u76d1\u63a7Gzip\u81ea\u52a8\u89e3\u538b",
-                            "\u89e3\u5bc6\u67d0\u5b89\u5353App",
-                            "\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32"
-                        };
-                        @Override
-                        public int getSize() { return values.length; }
-                        @Override
-                        public String getElementAt(int i) { return values[i]; }
-                    });
                     watchList.setMaximumSize(new Dimension(200, 62));
                     watchList.setFixedCellWidth(200);
                     watchList.addListSelectionListener(e -> watchListValueChanged(e));
@@ -709,6 +563,7 @@ public class MainGUI extends JPanel {
 
                 //======== panel2 ========
                 {
+                    panel2.setBorder(new EmptyBorder(20, 20, 20, 20));
 
                     //======== panel3 ========
                     {
@@ -731,6 +586,62 @@ public class MainGUI extends JPanel {
 
                         //---- watchUseRegex ----
                         watchUseRegex.setText("\u6240\u6709\u5339\u914d\u89c4\u5219\u91c7\u7528\u6b63\u5219\u6a21\u5f0f");
+
+                        //======== panel5 ========
+                        {
+                            panel5.setBorder(new TitledBorder("\u8bf7\u6c42\u7c7b\u578b"));
+
+                            //---- watchGET ----
+                            watchGET.setText("GET");
+
+                            //---- watchPOST ----
+                            watchPOST.setText("POST");
+
+                            //---- watchOPTIONS ----
+                            watchOPTIONS.setText("OPTIONS");
+
+                            //---- watchHEAD ----
+                            watchHEAD.setText("HEAD");
+
+                            //---- watchPUT ----
+                            watchPUT.setText("PUT");
+
+                            //---- watchDELETE ----
+                            watchDELETE.setText("DELETE");
+
+                            GroupLayout panel5Layout = new GroupLayout(panel5);
+                            panel5.setLayout(panel5Layout);
+                            panel5Layout.setHorizontalGroup(
+                                panel5Layout.createParallelGroup()
+                                    .addGroup(panel5Layout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addComponent(watchGET)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(watchPOST)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(watchOPTIONS)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(watchHEAD)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(watchPUT)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(watchDELETE)
+                                        .addContainerGap(55, Short.MAX_VALUE))
+                            );
+                            panel5Layout.setVerticalGroup(
+                                panel5Layout.createParallelGroup()
+                                    .addGroup(panel5Layout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addGroup(panel5Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(watchGET)
+                                            .addComponent(watchPOST)
+                                            .addComponent(watchOPTIONS)
+                                            .addComponent(watchHEAD)
+                                            .addComponent(watchPUT)
+                                            .addComponent(watchDELETE))
+                                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            );
+                        }
 
                         GroupLayout panel3Layout = new GroupLayout(panel3);
                         panel3.setLayout(panel3Layout);
@@ -759,13 +670,16 @@ public class MainGUI extends JPanel {
                                             .addComponent(watchRespBodyIncludeSelect)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(watchRespBodyInclude))
-                                        .addComponent(watchUseRegex, GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE))
+                                        .addComponent(watchUseRegex, GroupLayout.DEFAULT_SIZE, 532, Short.MAX_VALUE)
+                                        .addComponent(panel5, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                     .addContainerGap())
                         );
                         panel3Layout.setVerticalGroup(
                             panel3Layout.createParallelGroup()
-                                .addGroup(panel3Layout.createSequentialGroup()
+                                .addGroup(GroupLayout.Alignment.TRAILING, panel3Layout.createSequentialGroup()
                                     .addContainerGap()
+                                    .addComponent(panel5, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                                     .addGroup(panel3Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(watchUrlIncludeSelect)
                                         .addComponent(watchUrlInclude, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -787,7 +701,7 @@ public class MainGUI extends JPanel {
                                         .addComponent(watchRespBodyInclude, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(watchUseRegex)
-                                    .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addContainerGap())
                         );
                     }
 
@@ -795,13 +709,11 @@ public class MainGUI extends JPanel {
                     {
                         panel4.setBorder(new TitledBorder("\u811a\u672c\u914d\u7f6e"));
 
-                        //---- watchScriptList ----
-                        watchScriptList.setModel(new DefaultComboBoxModel<>(new String[] {
-                            "xxx\u89e3\u5bc6\u811a\u672c"
-                        }));
+                        //---- label8 ----
+                        label8.setText("\u6267\u884c\u547d\u4ee4\uff1a");
 
-                        //---- watchScriptCustomSelect ----
-                        watchScriptCustomSelect.setText("\u81ea\u5b9a\u4e49\u547d\u4ee4\u6267\u884c");
+                        //---- label7 ----
+                        label7.setText("\u914d\u7f6e\u540d\u79f0\uff1a");
 
                         GroupLayout panel4Layout = new GroupLayout(panel4);
                         panel4.setLayout(panel4Layout);
@@ -811,28 +723,27 @@ public class MainGUI extends JPanel {
                                     .addContainerGap()
                                     .addGroup(panel4Layout.createParallelGroup()
                                         .addGroup(panel4Layout.createSequentialGroup()
-                                            .addComponent(watchScriptSelect)
+                                            .addComponent(label8)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(watchScriptList, GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE))
+                                            .addComponent(watchCustom, GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE))
                                         .addGroup(panel4Layout.createSequentialGroup()
-                                            .addComponent(watchScriptCustomSelect)
+                                            .addComponent(label7)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(watchCustom, GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)))
+                                            .addComponent(watchName, GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)))
                                     .addContainerGap())
                         );
                         panel4Layout.setVerticalGroup(
                             panel4Layout.createParallelGroup()
                                 .addGroup(panel4Layout.createSequentialGroup()
-                                    .addGroup(panel4Layout.createParallelGroup()
-                                        .addGroup(panel4Layout.createSequentialGroup()
-                                            .addContainerGap()
-                                            .addComponent(watchScriptSelect))
-                                        .addComponent(watchScriptList, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                    .addGap(8, 8, 8)
+                                    .addGroup(panel4Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(label7)
+                                        .addComponent(watchName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                                     .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                                     .addGroup(panel4Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(watchScriptCustomSelect)
+                                        .addComponent(label8)
                                         .addComponent(watchCustom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                                    .addGap(0, 12, Short.MAX_VALUE))
+                                    .addGap(0, 4, Short.MAX_VALUE))
                         );
                     }
 
@@ -849,222 +760,87 @@ public class MainGUI extends JPanel {
                     watchDel.setText("\u5220\u9664");
                     watchDel.addActionListener(e -> watchDel(e));
 
-                    //---- label7 ----
-                    label7.setText("\u914d\u7f6e\u540d\u79f0\uff1a");
+                    //======== panel6 ========
+                    {
+                        panel6.setBorder(new TitledBorder("\u811a\u672c\u72b6\u6001"));
+
+                        //---- enableScript ----
+                        enableScript.setText("\u542f\u7528");
+                        enableScript.setSelected(true);
+
+                        //---- disableScript ----
+                        disableScript.setText("\u7981\u7528");
+
+                        GroupLayout panel6Layout = new GroupLayout(panel6);
+                        panel6.setLayout(panel6Layout);
+                        panel6Layout.setHorizontalGroup(
+                            panel6Layout.createParallelGroup()
+                                .addGroup(panel6Layout.createSequentialGroup()
+                                    .addGap(20, 20, 20)
+                                    .addComponent(enableScript)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(disableScript)
+                                    .addContainerGap(396, Short.MAX_VALUE))
+                        );
+                        panel6Layout.setVerticalGroup(
+                            panel6Layout.createParallelGroup()
+                                .addGroup(panel6Layout.createSequentialGroup()
+                                    .addContainerGap()
+                                    .addGroup(panel6Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(disableScript)
+                                        .addComponent(enableScript))
+                                    .addContainerGap(7, Short.MAX_VALUE))
+                        );
+                    }
 
                     GroupLayout panel2Layout = new GroupLayout(panel2);
                     panel2.setLayout(panel2Layout);
                     panel2Layout.setHorizontalGroup(
                         panel2Layout.createParallelGroup()
                             .addGroup(panel2Layout.createSequentialGroup()
-                                .addGap(27, 27, 27)
-                                .addGroup(panel2Layout.createParallelGroup()
-                                    .addComponent(panel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(panel2Layout.createSequentialGroup()
-                                        .addComponent(label7)
-                                        .addGap(6, 6, 6)
-                                        .addComponent(watchName, GroupLayout.PREFERRED_SIZE, 381, GroupLayout.PREFERRED_SIZE)
-                                        .addContainerGap(27, Short.MAX_VALUE))
-                                    .addGroup(panel2Layout.createSequentialGroup()
-                                        .addComponent(watchSave)
-                                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(watchTest)
-                                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(watchDel)
-                                        .addGap(0, 221, Short.MAX_VALUE))
-                                    .addComponent(panel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(watchSave)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(watchTest)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(watchDel)
+                                .addGap(0, 298, Short.MAX_VALUE))
+                            .addComponent(panel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(panel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(panel2Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(panel6, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
                     );
                     panel2Layout.setVerticalGroup(
                         panel2Layout.createParallelGroup()
-                            .addGroup(panel2Layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addGroup(panel2Layout.createParallelGroup()
-                                    .addGroup(panel2Layout.createSequentialGroup()
-                                        .addGap(7, 7, 7)
-                                        .addComponent(label7))
-                                    .addComponent(watchName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(panel3, GroupLayout.PREFERRED_SIZE, 235, GroupLayout.PREFERRED_SIZE)
+                            .addGroup(GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
+                                .addComponent(panel6, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, Short.MAX_VALUE)
+                                .addComponent(panel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(panel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
+                                .addGap(12, 12, 12)
                                 .addGroup(panel2Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(watchSave)
                                     .addComponent(watchTest)
                                     .addComponent(watchDel))
-                                .addContainerGap(10, Short.MAX_VALUE))
+                                .addGap(41, 41, 41))
                     );
                 }
                 watch.add(panel2, BorderLayout.CENTER);
             }
             tabbedPane1.addTab("\u76d1\u63a7\u914d\u7f6e", watch);
 
-            //======== main ========
-            {
-                main.setLayout(new BorderLayout());
-
-                //======== panel5 ========
-                {
-
-                    //======== panel6 ========
-                    {
-                        panel6.setBorder(new TitledBorder("\u6267\u884c\u547d\u4ee4"));
-
-                        //---- scriptCmd ----
-                        scriptCmd.setModel(new DefaultComboBoxModel<>(new String[] {
-                            "python",
-                            "java",
-                            "node",
-                            "php"
-                        }));
-
-                        //---- scriptCmdCustomSelect ----
-                        scriptCmdCustomSelect.setText("\u81ea\u5b9a\u4e49\u547d\u4ee4");
-
-                        GroupLayout panel6Layout = new GroupLayout(panel6);
-                        panel6.setLayout(panel6Layout);
-                        panel6Layout.setHorizontalGroup(
-                            panel6Layout.createParallelGroup()
-                                .addGroup(GroupLayout.Alignment.TRAILING, panel6Layout.createSequentialGroup()
-                                    .addContainerGap(13, Short.MAX_VALUE)
-                                    .addGroup(panel6Layout.createParallelGroup()
-                                        .addGroup(panel6Layout.createSequentialGroup()
-                                            .addComponent(scriptCmdSelect, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(scriptCmd, GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(panel6Layout.createSequentialGroup()
-                                            .addComponent(scriptCmdCustomSelect)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(scriptCmdCustom, GroupLayout.PREFERRED_SIZE, 336, GroupLayout.PREFERRED_SIZE)))
-                                    .addContainerGap())
-                        );
-                        panel6Layout.setVerticalGroup(
-                            panel6Layout.createParallelGroup()
-                                .addGroup(panel6Layout.createSequentialGroup()
-                                    .addContainerGap()
-                                    .addGroup(panel6Layout.createParallelGroup()
-                                        .addComponent(scriptCmd, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(scriptCmdSelect, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addGroup(panel6Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(scriptCmdCustomSelect)
-                                        .addComponent(scriptCmdCustom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                                    .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        );
-                    }
-
-                    //---- label3 ----
-                    label3.setText("\u811a\u672c\u540d\u79f0\uff1a");
-
-                    //---- scriptSave ----
-                    scriptSave.setText("\u4fdd\u5b58");
-                    scriptSave.addActionListener(e -> scriptSave(e));
-
-                    //---- scriptDel ----
-                    scriptDel.setText("\u5220\u9664");
-                    scriptDel.addActionListener(e -> scriptDel(e));
-
-                    //---- e ----
-                    e.setText("\u811a\u672c\u6587\u4ef6\uff1a");
-
-                    //---- label1 ----
-                    label1.setText("<html>\u4e2a\u4eba\u5efa\u8bae\uff1a \u5c06\u6240\u6709\u811a\u672c\u653e\u5230\u4e13\u6709\u76ee\u5f55\u4e0b\u4ee5\u5907\u4e0d\u65f6\u4e4b\u9700\u3002");
-
-                    GroupLayout panel5Layout = new GroupLayout(panel5);
-                    panel5.setLayout(panel5Layout);
-                    panel5Layout.setHorizontalGroup(
-                        panel5Layout.createParallelGroup()
-                            .addGroup(panel5Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(panel5Layout.createParallelGroup()
-                                    .addGroup(panel5Layout.createSequentialGroup()
-                                        .addComponent(panel6, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                        .addGap(21, 39, Short.MAX_VALUE))
-                                    .addGroup(panel5Layout.createSequentialGroup()
-                                        .addGroup(panel5Layout.createParallelGroup()
-                                            .addGroup(panel5Layout.createSequentialGroup()
-                                                .addGap(6, 6, 6)
-                                                .addGroup(panel5Layout.createParallelGroup()
-                                                    .addGroup(panel5Layout.createSequentialGroup()
-                                                        .addComponent(scriptSave)
-                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                                        .addComponent(scriptDel))
-                                                    .addGroup(panel5Layout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
-                                                        .addGroup(GroupLayout.Alignment.LEADING, panel5Layout.createSequentialGroup()
-                                                            .addComponent(e)
-                                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                            .addComponent(scriptProjectMain))
-                                                        .addGroup(panel5Layout.createSequentialGroup()
-                                                            .addComponent(label3)
-                                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                            .addComponent(scriptName, GroupLayout.PREFERRED_SIZE, 381, GroupLayout.PREFERRED_SIZE)))))
-                                            .addComponent(label1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                                        .addGap(0, 42, Short.MAX_VALUE))))
-                    );
-                    panel5Layout.setVerticalGroup(
-                        panel5Layout.createParallelGroup()
-                            .addGroup(panel5Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(panel6, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(panel5Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(scriptName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(label3))
-                                .addGap(18, 18, 18)
-                                .addGroup(panel5Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(e)
-                                    .addComponent(scriptProjectMain, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(panel5Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(scriptSave)
-                                    .addComponent(scriptDel))
-                                .addGap(18, 18, 18)
-                                .addComponent(label1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(193, Short.MAX_VALUE))
-                    );
-                }
-                main.add(panel5, BorderLayout.CENTER);
-
-                //======== scrollPane2 ========
-                {
-                    scrollPane2.setMaximumSize(new Dimension(200, 32767));
-
-                    //---- scriptList ----
-                    scriptList.setModel(new AbstractListModel<String>() {
-                        String[] values = {
-                            "\u76d1\u63a7Gzip\u81ea\u52a8\u89e3\u538b",
-                            "\u89e3\u5bc6\u67d0\u5b89\u5353App",
-                            "\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32\u8d85\u7ea7\u65e0\u654c\u957f\u7684\u5b57\u7b26\u4e32"
-                        };
-                        @Override
-                        public int getSize() { return values.length; }
-                        @Override
-                        public String getElementAt(int i) { return values[i]; }
-                    });
-                    scriptList.setMaximumSize(new Dimension(200, 62));
-                    scriptList.setFixedCellWidth(200);
-                    scriptList.addListSelectionListener(e -> scriptListValueChanged(e));
-                    scrollPane2.setViewportView(scriptList);
-                }
-                main.add(scrollPane2, BorderLayout.LINE_START);
-            }
-            tabbedPane1.addTab("\u811a\u672c\u7f16\u8f91", main);
-
             //======== Setting ========
             {
+                Setting.setBorder(new EmptyBorder(20, 20, 20, 20));
                 Setting.setLayout(new BorderLayout());
 
-                //======== scrollPane3 ========
-                {
-
-                    //---- label6 ----
-                    label6.setText("<html><h1>\u76d1\u63a7\u914d\u7f6e</h1>\n&nbsp;&nbsp; \u8be5\u90e8\u5206\u4e3b\u8981\u5224\u65ad\u54ea\u4e9b\u60c5\u51b5\u4e0b\u7684\u8bf7\u6c42\u5305/\u54cd\u5e94\u5305\u9700\u8981\u811a\u672c\u4ecb\u5165\u5904\u7406\u3002\n<h2>\u76d1\u63a7\u53c2\u6570</h2>\n&nbsp; &nbsp; \u6b64\u5904\u9700\u8981\u544a\u8bc9burp\uff0c\u9700\u8981\u6839\u636e\u4ec0\u4e48\u89c4\u5219\u8fdb\u884c\u76d1\u63a7\u3002\u52fe\u9009\u3010\u6240\u6709\u5339\u914d\u89c4\u5219\u91c7\u7528\u6b63\u5219\u6a21\u5f0f\u3011\u5219\u4f1a\u5c06\u76d1\u63a7\u53c2\u6570\u4ee5\u6b63\u5219\u7684\u5f62\u5f0f\u8fdb\u884c\u5339\u914d\u3002\n<h2>\u811a\u672c\u914d\u7f6e</h2>\n&nbsp;&nbsp; \u6b64\u5904\u53ef\u9009\u3010\u5185\u7f6e\u811a\u672c\u3011\u548c\u3010\u81ea\u5b9a\u4e49\u811a\u672c\u3011\u3002\u5185\u7f6e\u811a\u672c\u5c31\u662f\u5728\u3010\u811a\u672c\u7f16\u8f91\u3011\u4e2d\u914d\u7f6e\u597d\u7684\u811a\u672c\u3002\u3010\u81ea\u5b9a\u4e49\u811a\u672c\u3011\u5c31\u662f\u6ca1\u6709\u5728\u3010\u811a\u672c\u7f16\u8f91\u3011\u4e2d\u914d\u7f6e\u597d\u811a\u672c\u3002\n&nbsp;&nbsp; \u3010\u81ea\u5b9a\u4e49\u811a\u672c\u3011\u4e00\u822c\u4e3a\u3010python xxx.py\u3011\u7b49\u5f62\u5f0f\u3002\n<h2>\u6d4b\u8bd5</h2>\n&nbsp;&nbsp; \u6267\u884c\u6a21\u62df\u6d4b\u8bd5\uff0c\u6a21\u62dfburp\u771f\u5b9e\u6293\u5305\u573a\u666f\u6d4b\u8bd5\u3002\n<h1>\u811a\u672c\u7f16\u8f91</h1>\n&nbsp;&nbsp; \u8fd9\u4e00\u90e8\u5206\u4e3b\u8981\u5b58\u50a8\u4e00\u4e9b\u53ef\u4ee5\u8fdb\u884c\u590d\u7528\u7684\u811a\u672c\uff0c\u4f8b\u5982Gzip\u81ea\u52a8\u89e3\u538b\u811a\u672c\u7b49\u3002\n<h2>\u6267\u884c\u547d\u4ee4</h2>\n&nbsp;&nbsp; \u7b2c\u4e00\u4e2a\u9009\u9879\u662f\u9ed8\u8ba4\u4f7f\u7528\u90a3\u4e2a\u547d\u4ee4\u6765\u6267\u884c\u811a\u672c\uff0c\u5982\u679c\u4f60\u9700\u8981\u6267\u884c\u811a\u672c\u7684\u547d\u4ee4\u4e0d\u5728\u9009\u9879\u5361\u4e2d\uff0c\u4f60\u53ef\u4ee5\u4f7f\u7528\u7b2c\u4e8c\u4e2a\u9009\u9879\u6307\u5b9a\u6267\u884c\u7684\u547d\u4ee4\u3002\n<h2>\u811a\u672c\u540d\u79f0</h2>\n&nbsp;&nbsp; \u5c31\u662f\u8fd9\u4e2a\u811a\u672c\u4fdd\u5b58\u7684\u540d\u5b57\n<h2>\u811a\u672c\u9879\u76ee\u6587\u4ef6\u5939</h2>\n&nbsp;&nbsp; \u5c31\u662f\u811a\u672c\u6240\u5728\u7684\u6587\u4ef6\u5939\uff0c\u901a\u5e38\u5efa\u8bae\u4e3a\u6bcf\u4e2a\u811a\u672c\u914d\u7f6e\u4e00\u4e2a\u4e13\u95e8\u7684\u6587\u4ef6\u5939\u3002\n<h2>\u811a\u672c\u9879\u76ee\u4e3b\u6587\u4ef6</h2>\n&nbsp;&nbsp; \u5c31\u662f\u8fd0\u884c\u7684\u811a\u672c\u6587\u4ef6<br/>\n");
-                    label6.setBorder(new EmptyBorder(10, 10, 10, 10));
-                    scrollPane3.setViewportView(label6);
-                }
-                Setting.add(scrollPane3, BorderLayout.CENTER);
+                //---- label1 ----
+                label1.setText("<Html><h1>CustomCrypto</h1><h2>burp\u81ea\u5b9a\u4e49\u52a0\u89e3\u5bc6\u63d2\u4ef6</h2><h3>Github: https://github.com/dreamncn/CustomCrypto</h3><h3>Site: https://ankio.net</h3><h3>Powered by Ankio 2022.</h3>");
+                Setting.add(label1, BorderLayout.NORTH);
             }
-            tabbedPane1.addTab("\u5e2e\u52a9", Setting);
+            tabbedPane1.addTab("\u5173\u4e8e", Setting);
         }
 
         //======== dialog1 ========
@@ -1078,11 +854,13 @@ public class MainGUI extends JPanel {
 
                 //======== panel7 ========
                 {
-                    panel7.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border. EmptyBorder( 0
-                    , 0, 0, 0) , "", javax. swing. border. TitledBorder. CENTER, javax. swing. border. TitledBorder. BOTTOM
-                    , new java .awt .Font ("D\u0069alog" ,java .awt .Font .BOLD ,12 ), java. awt. Color. red) ,
-                    panel7. getBorder( )) ); panel7. addPropertyChangeListener (new java. beans. PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e
-                    ) {if ("\u0062order" .equals (e .getPropertyName () )) throw new RuntimeException( ); }} );
+                    panel7.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new
+                    javax. swing. border. EmptyBorder( 0, 0, 0, 0) , "JFor\u006dDesi\u0067ner \u0045valu\u0061tion", javax
+                    . swing. border. TitledBorder. CENTER, javax. swing. border. TitledBorder. BOTTOM, new java
+                    .awt .Font ("Dia\u006cog" ,java .awt .Font .BOLD ,12 ), java. awt
+                    . Color. red) ,panel7. getBorder( )) ); panel7. addPropertyChangeListener (new java. beans.
+                    PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("bord\u0065r" .
+                    equals (e .getPropertyName () )) throw new RuntimeException( ); }} );
                     panel7.setLayout(new BorderLayout());
 
                     //======== scrollPane4 ========
@@ -1214,13 +992,8 @@ public class MainGUI extends JPanel {
 
         //---- buttonGroup1 ----
         ButtonGroup buttonGroup1 = new ButtonGroup();
-        buttonGroup1.add(watchScriptSelect);
-        buttonGroup1.add(watchScriptCustomSelect);
-
-        //---- buttonGroup2 ----
-        ButtonGroup buttonGroup2 = new ButtonGroup();
-        buttonGroup2.add(scriptCmdSelect);
-        buttonGroup2.add(scriptCmdCustomSelect);
+        buttonGroup1.add(enableScript);
+        buttonGroup1.add(disableScript);
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
@@ -1243,35 +1016,26 @@ public class MainGUI extends JPanel {
     private JCheckBox watchRespBodyIncludeSelect;
     private JTextField watchRespBodyInclude;
     private JCheckBox watchUseRegex;
+    private JPanel panel5;
+    private JCheckBox watchGET;
+    private JCheckBox watchPOST;
+    private JCheckBox watchOPTIONS;
+    private JCheckBox watchHEAD;
+    private JCheckBox watchPUT;
+    private JCheckBox watchDELETE;
     private JPanel panel4;
-    private JRadioButton watchScriptSelect;
-    private JComboBox<String> watchScriptList;
-    private JRadioButton watchScriptCustomSelect;
     private JTextField watchCustom;
+    private JLabel label8;
+    private JLabel label7;
+    private JTextField watchName;
     private JButton watchSave;
     private JButton watchTest;
     private JButton watchDel;
-    private JLabel label7;
-    private JTextField watchName;
-    private JPanel main;
-    private JPanel panel5;
     private JPanel panel6;
-    private JComboBox<String> scriptCmd;
-    private JRadioButton scriptCmdSelect;
-    private JRadioButton scriptCmdCustomSelect;
-    private JTextField scriptCmdCustom;
-    private JLabel label3;
-    private JTextField scriptName;
-    private JButton scriptSave;
-    private JButton scriptDel;
-    private JLabel e;
-    private JTextField scriptProjectMain;
-    private JLabel label1;
-    private JScrollPane scrollPane2;
-    private JList<String> scriptList;
+    private JRadioButton enableScript;
+    private JRadioButton disableScript;
     private JPanel Setting;
-    private JScrollPane scrollPane3;
-    private JLabel label6;
+    private JLabel label1;
     private JDialog dialog1;
     private JTabbedPane tab;
     private JPanel panel7;
@@ -1295,7 +1059,5 @@ public class MainGUI extends JPanel {
     private JButton sendRequestServer;
     private JButton sendResponseBurp;
     private JButton sendResponseClient;
-
-
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

@@ -1,14 +1,8 @@
 
 <p align="center">
- <h1 align="center">CustomCrypto</h1>
- <h3 align="center">🚀 Burp自定义加解密插件</h3></p>
-<p align="center">
+<img src="https://socialify.git.ci/dreamncn/CustomCrypto/image?description=1&descriptionEditable=%F0%9F%9A%80%20%20Burp%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8A%A0%E8%A7%A3%E5%AF%86%E6%8F%92%E4%BB%B6&font=Source%20Code%20Pro&forks=1&issues=1&language=1&name=1&pattern=Overlapping%20Hexagons&pulls=1&stargazers=1&theme=Light">
+</p>
 
-<img src="https://img.shields.io/badge/Java-323330?style=for-the-badge&logo=CoffeeScript&logoColor=F7DF1E"/>
-
- <img src="https://img.shields.io/badge/IntelliJ_IDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white"/>
- <img src="https://img.shields.io/badge/BurpSuite-E0EFEF?style=for-the-badge&logo=Wireshark&logoColor=000"/>
- </p>
 
 
 
@@ -24,6 +18,10 @@
 
 于是乎，`CustomCrypto`诞生了。这是一个强大的加解密代理工具，可以将Burp流量代理到任意位置进行加解密。
 
+## 原理
+
+
+
 ## 使用
 
 - 
@@ -31,6 +29,9 @@
 ## 设置
 
 
+## 已知问题
+
+- 超长字符请求包或者返回包可能导致执行失败。
 
 ### Settings
 
