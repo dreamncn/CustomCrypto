@@ -17,6 +17,10 @@
 
 ![image-20220926224251101](https://pic.dreamn.cn/uPic/2022_09_26_22_42_51_1664203371_1664203371837_ljBFc1.png)
 
+- 在`Proxy`的`History`中，可以看到被修改后的请求
+
+  ![image-20220926231527312](https://pic.dreamn.cn/uPic/2022_09_26_23_15_28_1664205328_1664205328301_RN4xqs.png)
+
 ## 脚本编写指南
 
 插件调用脚本为：
@@ -70,6 +74,16 @@ const RESPONSE_SEND = "3"; Repeater/Interrupt发出响应（响应包加密）
 ## 脚本样例与实用脚本
 
 参考[Template](https://github.com/dreamncn/CustomCrypto/tree/master/template)文件夹内容，其中不同命名目录表示对不同编程语言的脚本样例，每一个文件夹中的`example文件`或者`example文件夹`表示的是空的脚本样例，其他的则是实用脚本。
+
+### NodeJs
+
+- 样本
+
+### Java
+
+- 样例
+- 某app签名自动更新
+- 自动进行Gzip压缩解压
 
 ## 脚本调试指南
 
