@@ -422,19 +422,19 @@ public class MainGUI extends JPanel {
         JSONObject request = null;
         if(!response){
              request = jsonObject.getJSONObject("request");
-            stringBuilder.append(request.getString("method")).append(" ").append(request.getString("path")).append(" ").append(request.getString("http_version").trim()).append("\n");
+            stringBuilder.append(request.getString("method")).append(" ").append(request.getString("path")).append(" ").append(request.getString("http_version").trim()).append("\r\n");
             
         }else{
              request = jsonObject.getJSONObject("response");
-            stringBuilder.append(request.getString("http_version")).append(" ").append(request.getString("state")).append(" ").append(request.getString("state_msg").trim()).append("\n");
+            stringBuilder.append(request.getString("http_version")).append(" ").append(request.getString("state")).append(" ").append(request.getString("state_msg").trim()).append("\r\n");
         }
         JSONObject headers =  request.getJSONObject("headers");
         for (String key : headers.keySet()) {
             // 替换headers之后请求异常RST_STREAM
-            stringBuilder.append(key).append(": ").append(headers.getString(key).trim()).append("\n");
+            stringBuilder.append(key).append(": ").append(headers.getString(key).trim()).append("\r\n");
         }
-        stringBuilder.append("\n");
-        stringBuilder.append(request.getString("body"));
+        stringBuilder.append("\r\n");
+        stringBuilder.append(request.getString("body").trim());
         return stringBuilder.toString();
     }
 
