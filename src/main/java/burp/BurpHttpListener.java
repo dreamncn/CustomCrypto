@@ -60,9 +60,49 @@ public class BurpHttpListener implements IHttpListener, IProxyListener {
                 JSONArray jsonArray = BurpExtender.gui.getUsageList();
                 for (int j = 0; j < jsonArray.size(); j++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(j);
+                    if(!jsonObject.getBoolean("use"))continue;
                     boolean useRegex = jsonObject.getBoolean("watchUseRegex");
+
                     int check = 0;
                     //增加判断拦截get或者post请求
+                    if(jsonObject.getBoolean("watchGET")){
+                        check++;
+                        if(method.equals("get")){
+                            check--;
+                        }
+                    }
+                    if(jsonObject.getBoolean("watchPOST")){
+                        check++;
+                        if(method.equals("post")){
+                            check--;
+                        }
+                    }
+                    if(jsonObject.getBoolean("watchOPTIONS")){
+                        check++;
+                        if(method.equals("options")){
+                            check--;
+                        }
+                    }
+                    if(jsonObject.getBoolean("watchHEAD")){
+                        check++;
+                        if(method.equals("head")){
+                            check--;
+                        }
+                    }
+                    if(jsonObject.getBoolean("watchPUT")){
+                        check++;
+                        if(method.equals("put")){
+                            check--;
+                        }
+                    }
+                    if(jsonObject.getBoolean("watchDELETE")){
+                        check++;
+                        if(method.equals("delete")){
+                            check--;
+                        }
+                    }
+
+
                     if (jsonObject.getBoolean("watchUrlIncludeSelect")) {
                         //不为空
                         check++;
