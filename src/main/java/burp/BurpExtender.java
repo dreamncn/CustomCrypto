@@ -6,7 +6,7 @@ import javax.swing.SwingUtilities;
 
 public class BurpExtender implements IBurpExtender,ITab {
     public final static String extensionName = "CustomCrypto";
-	public final static String version ="0.0.3";
+	public final static String version ="0.0.4";
 	public static IBurpExtenderCallbacks callbacks;
 	public static IExtensionHelpers helpers;
 	public static PrintWriter stdout;
