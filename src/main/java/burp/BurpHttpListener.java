@@ -4,6 +4,7 @@ package burp;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -323,7 +324,7 @@ public class BurpHttpListener implements IHttpListener, IProxyListener {
         BurpExtender.stdout.println("执行的命令："+cmd+" "+ReqRep.REQUEST_SEND+" "+cmdData);
         try {
             JSONObject jsonObject = JSONObject.parseObject(result);
-            int length = jsonObject.getJSONObject("request").getString("body").trim().length();
+            int length = jsonObject.getJSONObject("request").getString("body").trim().getBytes(StandardCharsets.UTF_8).length;
             if(length!=0&&jsonObject.getJSONObject("request").getJSONObject("headers").getString("Content-Length")!=null){
                jsonObject.getJSONObject("request").getJSONObject("headers").put("Content-Length",length);//更新数据长度
             }
