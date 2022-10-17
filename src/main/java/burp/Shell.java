@@ -5,6 +5,7 @@ import java.io.InputStream;
 
 public class Shell {
     public static String exec(String commands)  {
+        BurpExtender.stdout.println("执行命令："+commands);
         try{
             InputStream in = Runtime.getRuntime().exec(commands).getInputStream();
             byte[] bcache = new byte[1024];

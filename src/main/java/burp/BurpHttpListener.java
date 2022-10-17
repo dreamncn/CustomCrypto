@@ -300,7 +300,7 @@ public class BurpHttpListener implements IHttpListener, IProxyListener {
         String requestData = new String(messageInfo.getRequest());
         String cmdData = analyzeRequestResponse(requestData, null,false);
         String  result = Shell.exec(cmd+" "+ReqRep.REQUEST_RECEIVE+" "+cmdData);
-        BurpExtender.stdout.println("执行的命令："+cmd+" "+ReqRep.REQUEST_RECEIVE+" "+cmdData);
+        //BurpExtender.stdout.println("执行的命令："+cmd+" "+ReqRep.REQUEST_RECEIVE+" "+cmdData);
         try {
             JSONObject jsonObject = JSONObject.parseObject(result);
             String resultData = convertRequestResponse(jsonObject,messageInfo,false);
@@ -321,7 +321,7 @@ public class BurpHttpListener implements IHttpListener, IProxyListener {
         BurpExtender.stdout.println("收到的请求包："+requestData);
         String cmdData = analyzeRequestResponse(requestData,null,false);
         String  result = Shell.exec(cmd+" "+ReqRep.REQUEST_SEND+" "+cmdData);
-        BurpExtender.stdout.println("执行的命令："+cmd+" "+ReqRep.REQUEST_SEND+" "+cmdData);
+      //  BurpExtender.stdout.println("执行的命令："+cmd+" "+ReqRep.REQUEST_SEND+" "+cmdData);
         try {
             JSONObject jsonObject = JSONObject.parseObject(result);
             int length = jsonObject.getJSONObject("request").getString("body").trim().getBytes(StandardCharsets.UTF_8).length;
@@ -347,7 +347,7 @@ public class BurpHttpListener implements IHttpListener, IProxyListener {
         String responseData = new String(messageInfo.getResponse());
         String cmdData = analyzeRequestResponse(requestData,responseData,true);
         String  result = Shell.exec(cmd+" "+ReqRep.RESPONSE_RECEIVE+" "+cmdData);
-        BurpExtender.stdout.println("执行的命令："+cmd+" "+ReqRep.RESPONSE_RECEIVE+" "+cmdData);
+       // BurpExtender.stdout.println("执行的命令："+cmd+" "+ReqRep.RESPONSE_RECEIVE+" "+cmdData);
         try {
             JSONObject jsonObject = JSONObject.parseObject(result);
             String sendData = convertRequestResponse(jsonObject,messageInfo,true);
@@ -368,7 +368,7 @@ public class BurpHttpListener implements IHttpListener, IProxyListener {
         String responseData = new String(messageInfo.getResponse());
         String cmdData = analyzeRequestResponse(requestData,responseData,true);
         String  result = Shell.exec(cmd+" "+ReqRep.RESPONSE_SEND+" "+cmdData);
-        BurpExtender.stdout.println("执行的命令："+cmd+" "+ReqRep.RESPONSE_SEND+" "+cmdData);
+    //    BurpExtender.stdout.println("执行的命令："+cmd+" "+ReqRep.RESPONSE_SEND+" "+cmdData);
         try {
             JSONObject jsonObject = JSONObject.parseObject(result);
             String sendData = convertRequestResponse(jsonObject,messageInfo,true);

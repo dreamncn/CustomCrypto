@@ -286,15 +286,19 @@ public class MainGUI extends JPanel {
         int i = 0;
         for ( i = 1; i < reqs.length; i++) {
             String data = reqs[i];
-            String[] kv = data.split(": ");
-            if("".equals(data)){
+            if("".equals(data.trim())){
                 break;//到了导数第二行
             }
-            if(kv.length!=2){
-                showMsg("Headers信息存在错误");
+
+            int key = data.indexOf(":");
+            if(key==-1){
+                showMsg("Headers信息存在错误:"+data);
                 return null;
             }
-            jsonObjectHeaders.put(kv[0],kv[1]);
+
+           // String value = data.substring(0,key);
+
+            jsonObjectHeaders.put(data.substring(0,key).trim(),data.substring(key+1).trim());
 
         }
         StringBuilder stringBuilder = new StringBuilder();
@@ -337,15 +341,21 @@ public class MainGUI extends JPanel {
              i = 0;
             for ( i = 1; i < resp.length; i++) {
                 String data = resp[i];
-                String[] kv = data.split(": ");
-                if("".equals(data)){
+                if("".equals(data.trim())){
                     break;//到了导数第二行
                 }
-                if(kv.length!=2){
-                    showMsg("响应包Headers信息存在错误");
+
+                int key = data.indexOf(":");
+                if(key==-1){
+                    showMsg("Headers信息存在错误:"+data);
                     return null;
                 }
-                jsonObjectHeaders.put(kv[0],kv[1]);
+
+                // String value = data.substring(0,key);
+
+                jsonObjectHeaders.put(data.substring(0,key).trim(),data.substring(key+1).trim());
+
+
 
             }
              stringBuilder = new StringBuilder();
@@ -436,10 +446,10 @@ public class MainGUI extends JPanel {
         String result = "";
         try {
             String out  = testCommand+" 2 " + Base64.getEncoder().encodeToString(data.getBytes());
+
             result =  Shell.exec(out);
             JSONObject jsonObject = JSONObject.parseObject(result);
             result = convert(jsonObject,true);
-
         } catch (Exception ex) {
             ex.printStackTrace();
             result = ex.getMessage();
