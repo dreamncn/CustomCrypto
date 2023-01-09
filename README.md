@@ -31,11 +31,11 @@
 
 其中，第一个参数为 `请求类型`，一共有四种类型：
 
-```java
-const REQUEST_RECEIVE = "0"; 日志/Interrupt收到请求（请求包解密）
-const REQUEST_SEND = "1"; Repeater/Interrupt发出请求（请求包加密）
-const RESPONSE_RECEIVE = "2"; 日志/Repeater/Interrupt收到响应（响应包解密）
-const RESPONSE_SEND = "3"; Repeater/Interrupt发出响应（响应包加密）
+```js
+const REQUEST_RECEIVE = "0"; // 日志/Interrupt收到请求（请求包解密）
+const REQUEST_SEND = "1"; // Repeater/Interrupt发出请求（请求包加密）
+const RESPONSE_RECEIVE = "2"; // 日志/Repeater/Interrupt收到响应（响应包解密）
+const RESPONSE_SEND = "3"; // Repeater/Interrupt发出响应（响应包加密）
 ```
 
 可以根据burp的生命周期来理解这四种类型：
