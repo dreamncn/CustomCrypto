@@ -18,7 +18,11 @@ public class BurpHttpListener implements IHttpListener, IProxyListener {
      *
      */
     private boolean analyze(IHttpRequestResponse request, boolean messageIsRequest,String[] cmd,Process process) throws IOException {
-        if(!rules.getAuto())return false;
+        BurpExtender.print("分析请求中");
+        if(!rules.getAuto()){
+            BurpExtender.print("根据设置不自动解密");
+            return false;
+        }
         rules.readRule();
         String url = request.getHttpService().getProtocol() + "://" + request.getHttpService().getHost();
         if(!messageIsRequest){
@@ -28,8 +32,12 @@ public class BurpHttpListener implements IHttpListener, IProxyListener {
         }
         url += httpAgreement.path;
         Rule rule = rules.findRule(httpAgreement.method, url, httpAgreement.headers, httpAgreement.body);
-        if(rule==null)return false;
+        if(rule==null) {
+            BurpExtender.print("没有合适的脚本允许解密");
+            return false;
+        }
         BurpExtender.print(String.format("脚本: %s 执行",rule.name));
+        if(rule.command==null)return false;
         cmd[0] = rule.command;
         return true;
     }
@@ -45,24 +53,29 @@ public class BurpHttpListener implements IHttpListener, IProxyListener {
     @Override
     public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse messageInfo) {
         String[] cmd = new String[1];
-
+        BurpExtender.print("=================================================");
         //使用引用传递获取需要执行的命令
         //返回值标识是否需要拦截
         try {
             Process process = new Process();
-            if (analyze(messageInfo, messageIsRequest,cmd, process)) return;
-            BurpExtender.print("=================================================");
+            //不需要处理直接返回
+            if (!analyze(messageInfo, messageIsRequest,cmd, process)){
+                process.destroy();
+                return;
+            }
             if (messageIsRequest) {
+                BurpExtender.print("======> 发送给服务端");
                 requestOut(messageInfo, process, cmd[0]);//发送请求
             } else {
+                BurpExtender.print("======> 收到服务端");
                 responseIn(messageInfo, process, cmd[0]);//收到响应
             }
-            BurpExtender.print("=================================================");
+
         } catch (IOException e) {
             e.printStackTrace();
             BurpExtender.print("错误信息："+e.getMessage(),1);
         }
-
+        BurpExtender.print("=================================================");
     }
 
     /**
@@ -76,20 +89,27 @@ public class BurpHttpListener implements IHttpListener, IProxyListener {
         String[] cmd = new String[1];
         //使用引用传递获取需要执行的命令
         //返回值标识是否需要拦截
+        BurpExtender.print("=================================================");
         try {
             Process process = new Process();
-            if (analyze(message.getMessageInfo(), messageIsRequest, cmd,process)) return;
-            BurpExtender.print("=================================================");
+            if (!analyze(message.getMessageInfo(), messageIsRequest, cmd,process)) {
+                process.destroy();
+                return;
+            }
+
             if (messageIsRequest) {
+                BurpExtender.print("======> 发送给客户端");
                 requestIn(message, process, cmd[0]);//收到请求
             } else {
+                BurpExtender.print("======> 收到客户端");
                 responseOut(message,process, cmd[0]);//发送响应
             }
-            BurpExtender.print("=================================================");
+
         } catch (IOException e) {
             e.printStackTrace();
             BurpExtender.print("错误信息："+e.getMessage(),1);
         }
+        BurpExtender.print("=================================================");
     }
 
     /**

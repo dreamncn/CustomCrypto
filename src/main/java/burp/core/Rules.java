@@ -22,9 +22,10 @@ public class Rules {
     }
     public void setAuto(boolean isAuto){
          auto = isAuto;
-        Storage.writeBoolean("auto",isAuto);
+         Storage.writeBoolean("auto",isAuto);
     }
     public ArrayList<Rule> getAll(){
+        rule = Storage.read("rules");
         return rule;
     }
 
@@ -32,7 +33,7 @@ public class Rules {
      * 根据条件查找规则
      */
     public Rule findRule(String method,String url,String headers,String body){
-        for (Rule r : rule) {
+        for (Rule r : getAll()) {
             if (r.inMethod(method) && r.inBody(body) && r.inHeader(headers) && r.inUrl(url)) {
                 if(r.command.isEmpty())continue;
                 return r;
@@ -85,11 +86,11 @@ public class Rules {
         switch (type){
             case RequestFromClient:stringBuilder.append(0);break;
             case RequestToServer:stringBuilder.append(1);break;
-            case ResponseToClient:stringBuilder.append(2);break;
-            default:stringBuilder.append(3);break;
+            case ResponseToClient:stringBuilder.append(3);break;
+            default:stringBuilder.append(2);break;
         }
         stringBuilder.append(" ").append(file);
-        String result = exec(stringBuilder.toString());
+        String result = exec(stringBuilder.toString()).trim();
         if("success".equals(result)){
             return true;
         }else{

@@ -1,5 +1,7 @@
 package burp.core;
 
+import burp.BurpExtender;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -14,7 +16,7 @@ public class Rule implements Serializable {
 
 
     public boolean inMethod(String m){
-        return method.size()==0||method.contains(m);
+        return method.size()==0||method.contains(m.toLowerCase());
     }
 
     public boolean inUrl(String u){
@@ -36,4 +38,16 @@ public class Rule implements Serializable {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Rule{" +
+                "name='" + name + '\'' +
+                ", url='" + url + '\'' +
+                ", header='" + header + '\'' +
+                ", body='" + body + '\'' +
+                ", method=" + method +
+                ", regex=" + regex +
+                ", command='" + command + '\'' +
+                '}';
+    }
 }
