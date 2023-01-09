@@ -29,7 +29,7 @@ public class Storage {
             input.close();
             return rule;
         }catch (Exception e){
-            BurpExtender.print("读取异常："+e);
+         //   BurpExtender.print("读取异常："+e);
             return new ArrayList<>();
         }
     }

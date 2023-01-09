@@ -1,9 +1,7 @@
 package burp.core;
-import org.checkerframework.checker.units.qual.A;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class Rule implements Serializable {
     public String name = "";

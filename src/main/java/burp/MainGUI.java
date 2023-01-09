@@ -132,12 +132,13 @@ public class MainGUI extends JPanel {
 
             //======== panel1 ========
             {
-                panel1.setBorder ( new javax . swing. border .CompoundBorder ( new javax . swing. border .TitledBorder ( new javax . swing.
-                border .EmptyBorder ( 0, 0 ,0 , 0) ,  "JF\u006frm\u0044es\u0069gn\u0065r \u0045va\u006cua\u0074io\u006e" , javax. swing .border . TitledBorder. CENTER
-                ,javax . swing. border .TitledBorder . BOTTOM, new java. awt .Font ( "D\u0069al\u006fg", java .awt . Font
-                . BOLD ,12 ) ,java . awt. Color .red ) ,panel1. getBorder () ) ); panel1. addPropertyChangeListener(
-                new java. beans .PropertyChangeListener ( ){ @Override public void propertyChange (java . beans. PropertyChangeEvent e) { if( "\u0062or\u0064er"
-                .equals ( e. getPropertyName () ) )throw new RuntimeException( ) ;} } );
+                panel1.setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax
+                .swing.border.EmptyBorder(0,0,0,0), "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn",javax.swing
+                .border.TitledBorder.CENTER,javax.swing.border.TitledBorder.BOTTOM,new java.awt.
+                Font("Dia\u006cog",java.awt.Font.BOLD,12),java.awt.Color.red
+                ),panel1. getBorder()));panel1. addPropertyChangeListener(new java.beans.PropertyChangeListener(){@Override
+                public void propertyChange(java.beans.PropertyChangeEvent e){if("\u0062ord\u0065r".equals(e.getPropertyName(
+                )))throw new RuntimeException();}});
                 panel1.setLayout(new BorderLayout());
 
                 //======== panel6 ========
@@ -240,8 +241,7 @@ public class MainGUI extends JPanel {
                                     .addGroup(panel3Layout.createSequentialGroup()
                                         .addContainerGap()
                                         .addGroup(panel3Layout.createParallelGroup()
-                                            .addComponent(panel5, GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
-                                            .addComponent(watchUseRegex, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(watchUseRegex, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
                                             .addGroup(panel3Layout.createSequentialGroup()
                                                 .addGap(6, 6, 6)
                                                 .addComponent(label2)
@@ -258,15 +258,16 @@ public class MainGUI extends JPanel {
                                                         .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)))
                                                 .addGroup(panel3Layout.createParallelGroup()
                                                     .addComponent(watchReqHeadInclude)
-                                                    .addComponent(watchReqBodyInclude))))
+                                                    .addComponent(watchReqBodyInclude)))
+                                            .addComponent(panel5, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                         .addContainerGap())
                             );
                             panel3Layout.setVerticalGroup(
                                 panel3Layout.createParallelGroup()
                                     .addGroup(GroupLayout.Alignment.TRAILING, panel3Layout.createSequentialGroup()
                                         .addContainerGap()
-                                        .addComponent(panel5, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 96, Short.MAX_VALUE)
+                                        .addComponent(panel5, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(panel3Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                             .addComponent(label2)
                                             .addComponent(watchUrlInclude, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -304,11 +305,11 @@ public class MainGUI extends JPanel {
                                             .addGroup(panel4Layout.createSequentialGroup()
                                                 .addComponent(label8)
                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(watchCustom, GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE))
+                                                .addComponent(watchCustom, GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE))
                                             .addGroup(panel4Layout.createSequentialGroup()
                                                 .addComponent(label7)
                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(watchName, GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)))
+                                                .addComponent(watchName, GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)))
                                         .addContainerGap())
                             );
                             panel4Layout.setVerticalGroup(
@@ -342,12 +343,12 @@ public class MainGUI extends JPanel {
                                     .addContainerGap()
                                     .addGroup(panel2Layout.createParallelGroup()
                                         .addComponent(panel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(panel3, GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
+                                        .addComponent(panel3, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(panel2Layout.createSequentialGroup()
                                             .addComponent(watchSave)
                                             .addGap(18, 18, 18)
                                             .addComponent(watchDel)
-                                            .addGap(0, 101, Short.MAX_VALUE)))
+                                            .addGap(0, 363, Short.MAX_VALUE)))
                                     .addContainerGap())
                         );
                         panel2Layout.setVerticalGroup(
@@ -355,12 +356,12 @@ public class MainGUI extends JPanel {
                                 .addGroup(GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
                                     .addComponent(panel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                     .addGap(18, 18, 18)
-                                    .addComponent(panel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                    .addGap(18, 18, 18)
+                                    .addComponent(panel3, GroupLayout.PREFERRED_SIZE, 254, GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                                     .addGroup(panel2Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(watchSave)
                                         .addComponent(watchDel))
-                                    .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addContainerGap(112, Short.MAX_VALUE))
                         );
                     }
                     splitPane1.setRightComponent(panel2);
