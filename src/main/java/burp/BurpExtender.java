@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.SwingUtilities;
 
@@ -15,6 +16,7 @@ public class BurpExtender implements IBurpExtender,ITab {
 	public static PrintWriter stdout;
 	public static PrintWriter stderr;
 	public static MainGUI gui;
+
 
 	@Override
 	public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {

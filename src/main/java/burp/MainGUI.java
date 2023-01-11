@@ -26,7 +26,7 @@ import java.util.ArrayList;
  * 插件的GUI实现
  * @author ankio
  */
-public class MainGUI extends JPanel {
+public class MainGUI  {
     private final Rules rules;
     /**
      * 构造函数
