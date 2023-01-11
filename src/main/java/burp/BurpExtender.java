@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.SwingUtilities;
 
@@ -16,6 +17,7 @@ public class BurpExtender implements IBurpExtender,ITab {
 	public static PrintWriter stderr;
 	public static MainGUI gui;
 
+
 	@Override
 	public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
 		BurpExtender.callbacks = callbacks;
@@ -23,13 +25,17 @@ public class BurpExtender implements IBurpExtender,ITab {
 		stdout = new PrintWriter(callbacks.getStdout(),true);
 		stderr = new PrintWriter(callbacks.getStderr(),true);
 		callbacks.setExtensionName(extensionName+" "+version);
+		gui = new MainGUI();
+
 		try {
+
 			callbacks.registerHttpListener(new BurpHttpListener());
 			callbacks.registerProxyListener(new BurpHttpListener());
-			gui = new MainGUI();
+			callbacks.registerMessageEditorTabFactory(new MessageEditorTabFactory());
+
 			SwingUtilities.invokeLater(() -> {
 				BurpExtender.callbacks.addSuiteTab(BurpExtender.this);
-				stdout.println(
+				print(
 						"[+] " + BurpExtender.extensionName + " is loaded\n"
 								+ "[+] ^_^\n"
 								+ "[+]\n"

@@ -4,11 +4,14 @@
 
 package burp;
 
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 import burp.core.Rule;
 import burp.core.Rules;
+import burp.core.Storage;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -23,7 +26,7 @@ import java.util.ArrayList;
  * 插件的GUI实现
  * @author ankio
  */
-public class MainGUI extends JPanel {
+public class MainGUI  {
     private final Rules rules;
     /**
      * 构造函数
@@ -48,9 +51,10 @@ public class MainGUI extends JPanel {
         for (Rule rule:rules.getAll()) {
             arrayList.add(rule.name);
         }
-        BurpExtender.print("数据："+arrayList);
         watchList.setListData(arrayList.toArray(new String[0]));
         initTable();
+        watchRoot.setText(Storage.readString("root"));
+       
     }
 
    
@@ -91,6 +95,27 @@ public class MainGUI extends JPanel {
         rules.setAuto(autoRun.isSelected());
     }
 
+    private void watchRootInputMethodTextChanged(InputMethodEvent e) {
+        Storage.writeString("root",watchRoot.getText());
+    }
+
+    private void watchExport(ActionEvent e) {
+        StringSelection ss = new StringSelection(Storage.encode(rules.getAll()));//创建能传输指定 String 的 Transferable
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null); //跟上面三行代码效果相同
+        Storage.encode(rules.getAll());
+        showMsg("已复制到剪切板！");
+    }
+
+    private void watchImport(ActionEvent e) {
+        String input = JOptionPane.showInputDialog( "请输入数据" );
+        ArrayList<Rule> rules = Storage.decode(input);
+        Rules r = new Rules();
+        for (Rule rule:rules ) {
+            r.add(rule);
+        }
+        showMsg("导入成功！");
+    }
+
 
 
     private void initComponents() {
@@ -99,7 +124,12 @@ public class MainGUI extends JPanel {
         tabbedPane1 = new JTabbedPane();
         panel1 = new JPanel();
         panel6 = new JPanel();
+        panel7 = new JPanel();
         autoRun = new JCheckBox();
+        label9 = new JLabel();
+        watchRoot = new JTextField();
+        watchImport = new JButton();
+        watchExport = new JButton();
         splitPane1 = new JSplitPane();
         watchList = new JList<>();
         panel2 = new JPanel();
@@ -132,22 +162,80 @@ public class MainGUI extends JPanel {
 
             //======== panel1 ========
             {
-                panel1.setBorder ( new javax . swing. border .CompoundBorder ( new javax . swing. border .TitledBorder ( new javax . swing.
-                border .EmptyBorder ( 0, 0 ,0 , 0) ,  "JF\u006frm\u0044es\u0069gn\u0065r \u0045va\u006cua\u0074io\u006e" , javax. swing .border . TitledBorder. CENTER
-                ,javax . swing. border .TitledBorder . BOTTOM, new java. awt .Font ( "D\u0069al\u006fg", java .awt . Font
-                . BOLD ,12 ) ,java . awt. Color .red ) ,panel1. getBorder () ) ); panel1. addPropertyChangeListener(
-                new java. beans .PropertyChangeListener ( ){ @Override public void propertyChange (java . beans. PropertyChangeEvent e) { if( "\u0062or\u0064er"
-                .equals ( e. getPropertyName () ) )throw new RuntimeException( ) ;} } );
+                panel1.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border.
+                EmptyBorder( 0, 0, 0, 0) , "JFor\u006dDesi\u0067ner \u0045valu\u0061tion", javax. swing. border. TitledBorder. CENTER, javax. swing
+                . border. TitledBorder. BOTTOM, new java .awt .Font ("Dia\u006cog" ,java .awt .Font .BOLD ,12 ),
+                java. awt. Color. red) ,panel1. getBorder( )) ); panel1. addPropertyChangeListener (new java. beans. PropertyChangeListener( )
+                { @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("bord\u0065r" .equals (e .getPropertyName () ))
+                throw new RuntimeException( ); }} );
                 panel1.setLayout(new BorderLayout());
 
                 //======== panel6 ========
                 {
-                    panel6.setLayout(new FlowLayout());
+                    panel6.setLayout(new BorderLayout());
 
-                    //---- autoRun ----
-                    autoRun.setText("\u81ea\u52a8\u6267\u884c\u811a\u672c");
-                    autoRun.addChangeListener(e -> autoRunStateChanged(e));
-                    panel6.add(autoRun);
+                    //======== panel7 ========
+                    {
+                        panel7.setBorder(new TitledBorder("\u63d2\u4ef6\u914d\u7f6e"));
+
+                        //---- autoRun ----
+                        autoRun.setText("\u81ea\u52a8\u6267\u884c\u811a\u672c");
+                        autoRun.addChangeListener(e -> autoRunStateChanged(e));
+
+                        //---- label9 ----
+                        label9.setText("\u811a\u672c\u7684\u5b58\u653e\u76ee\u5f55\uff08\u53ef\u9009\uff09");
+
+                        //---- watchRoot ----
+                        watchRoot.addInputMethodListener(new InputMethodListener() {
+                            @Override
+                            public void caretPositionChanged(InputMethodEvent e) {}
+                            @Override
+                            public void inputMethodTextChanged(InputMethodEvent e) {
+                                watchRootInputMethodTextChanged(e);
+                            }
+                        });
+
+                        //---- watchImport ----
+                        watchImport.setText("\u5bfc\u5165\u914d\u7f6e");
+                        watchImport.addActionListener(e -> watchImport(e));
+
+                        //---- watchExport ----
+                        watchExport.setText("\u5bfc\u51fa\u914d\u7f6e");
+                        watchExport.addActionListener(e -> watchExport(e));
+
+                        GroupLayout panel7Layout = new GroupLayout(panel7);
+                        panel7.setLayout(panel7Layout);
+                        panel7Layout.setHorizontalGroup(
+                            panel7Layout.createParallelGroup()
+                                .addGroup(panel7Layout.createSequentialGroup()
+                                    .addContainerGap()
+                                    .addGroup(panel7Layout.createParallelGroup()
+                                        .addComponent(autoRun, GroupLayout.PREFERRED_SIZE, 800, GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(panel7Layout.createSequentialGroup()
+                                            .addGroup(panel7Layout.createParallelGroup()
+                                                .addComponent(label9)
+                                                .addComponent(watchExport))
+                                            .addGap(12, 12, 12)
+                                            .addGroup(panel7Layout.createParallelGroup()
+                                                .addComponent(watchRoot, GroupLayout.PREFERRED_SIZE, 442, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(watchImport))))
+                                    .addGap(0, 0, 0))
+                        );
+                        panel7Layout.setVerticalGroup(
+                            panel7Layout.createParallelGroup()
+                                .addGroup(panel7Layout.createSequentialGroup()
+                                    .addComponent(autoRun)
+                                    .addGap(6, 6, 6)
+                                    .addGroup(panel7Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(label9)
+                                        .addComponent(watchRoot, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                    .addGroup(panel7Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(watchImport)
+                                        .addComponent(watchExport)))
+                        );
+                    }
+                    panel6.add(panel7, BorderLayout.NORTH);
                 }
                 panel1.add(panel6, BorderLayout.NORTH);
 
@@ -240,8 +328,7 @@ public class MainGUI extends JPanel {
                                     .addGroup(panel3Layout.createSequentialGroup()
                                         .addContainerGap()
                                         .addGroup(panel3Layout.createParallelGroup()
-                                            .addComponent(panel5, GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
-                                            .addComponent(watchUseRegex, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(watchUseRegex, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
                                             .addGroup(panel3Layout.createSequentialGroup()
                                                 .addGap(6, 6, 6)
                                                 .addComponent(label2)
@@ -258,15 +345,16 @@ public class MainGUI extends JPanel {
                                                         .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)))
                                                 .addGroup(panel3Layout.createParallelGroup()
                                                     .addComponent(watchReqHeadInclude)
-                                                    .addComponent(watchReqBodyInclude))))
+                                                    .addComponent(watchReqBodyInclude)))
+                                            .addComponent(panel5, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                         .addContainerGap())
                             );
                             panel3Layout.setVerticalGroup(
                                 panel3Layout.createParallelGroup()
                                     .addGroup(GroupLayout.Alignment.TRAILING, panel3Layout.createSequentialGroup()
                                         .addContainerGap()
-                                        .addComponent(panel5, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 96, Short.MAX_VALUE)
+                                        .addComponent(panel5, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(panel3Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                             .addComponent(label2)
                                             .addComponent(watchUrlInclude, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -304,11 +392,11 @@ public class MainGUI extends JPanel {
                                             .addGroup(panel4Layout.createSequentialGroup()
                                                 .addComponent(label8)
                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(watchCustom, GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE))
+                                                .addComponent(watchCustom, GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE))
                                             .addGroup(panel4Layout.createSequentialGroup()
                                                 .addComponent(label7)
                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(watchName, GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)))
+                                                .addComponent(watchName, GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)))
                                         .addContainerGap())
                             );
                             panel4Layout.setVerticalGroup(
@@ -342,12 +430,12 @@ public class MainGUI extends JPanel {
                                     .addContainerGap()
                                     .addGroup(panel2Layout.createParallelGroup()
                                         .addComponent(panel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(panel3, GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
+                                        .addComponent(panel3, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(panel2Layout.createSequentialGroup()
                                             .addComponent(watchSave)
                                             .addGap(18, 18, 18)
                                             .addComponent(watchDel)
-                                            .addGap(0, 101, Short.MAX_VALUE)))
+                                            .addGap(0, 0, Short.MAX_VALUE)))
                                     .addContainerGap())
                         );
                         panel2Layout.setVerticalGroup(
@@ -355,12 +443,12 @@ public class MainGUI extends JPanel {
                                 .addGroup(GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
                                     .addComponent(panel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                     .addGap(18, 18, 18)
-                                    .addComponent(panel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                    .addGap(18, 18, 18)
+                                    .addComponent(panel3, GroupLayout.PREFERRED_SIZE, 254, GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                                     .addGroup(panel2Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(watchSave)
                                         .addComponent(watchDel))
-                                    .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addContainerGap(26, Short.MAX_VALUE))
                         );
                     }
                     splitPane1.setRightComponent(panel2);
@@ -449,7 +537,12 @@ public class MainGUI extends JPanel {
     private JTabbedPane tabbedPane1;
     private JPanel panel1;
     private JPanel panel6;
+    private JPanel panel7;
     private JCheckBox autoRun;
+    private JLabel label9;
+    private JTextField watchRoot;
+    private JButton watchImport;
+    private JButton watchExport;
     private JSplitPane splitPane1;
     private JList<String> watchList;
     private JPanel panel2;

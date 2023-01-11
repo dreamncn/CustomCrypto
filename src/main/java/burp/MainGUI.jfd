@@ -7,12 +7,39 @@ new FormModel {
 			name: "tabbedPane1"
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 				name: "panel1"
-				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) ) {
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 					name: "panel6"
-					add( new FormComponent( "javax.swing.JCheckBox" ) {
-						name: "autoRun"
-						"text": "自动执行脚本"
-						addEvent( new FormEvent( "javax.swing.event.ChangeListener", "stateChanged", "autoRunStateChanged", true ) )
+					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+						"$horizontalGroup": "par l {seq {space :::p, par l {comp autoRun::l:p:800:p, seq l {par l {comp label9:::p::p, comp watchExport::l:p::p}, space :p:12:p, par l {comp watchRoot:::p:442:p, comp watchImport:::p::p}}}, space :p:0:p}}"
+						"$verticalGroup": "par l {seq l {comp autoRun:::p::p, space :p:6:p, par b {comp label9::b:p::p, comp watchRoot::b:p::p}, space :::p, par b {comp watchImport::b:p::p, comp watchExport::b:p::p}}}"
+					} ) {
+						name: "panel7"
+						"border": new javax.swing.border.TitledBorder( "插件配置" )
+						add( new FormComponent( "javax.swing.JCheckBox" ) {
+							name: "autoRun"
+							"text": "自动执行脚本"
+							addEvent( new FormEvent( "javax.swing.event.ChangeListener", "stateChanged", "autoRunStateChanged", true ) )
+						} )
+						add( new FormComponent( "javax.swing.JLabel" ) {
+							name: "label9"
+							"text": "脚本的存放目录（可选）"
+						} )
+						add( new FormComponent( "javax.swing.JTextField" ) {
+							name: "watchRoot"
+							addEvent( new FormEvent( "java.awt.event.InputMethodListener", "inputMethodTextChanged", "watchRootInputMethodTextChanged", true ) )
+						} )
+						add( new FormComponent( "javax.swing.JButton" ) {
+							name: "watchImport"
+							"text": "导入配置"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "watchImport", true ) )
+						} )
+						add( new FormComponent( "javax.swing.JButton" ) {
+							name: "watchExport"
+							"text": "导出配置"
+							addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "watchExport", true ) )
+						} )
+					}, new FormLayoutConstraints( class java.lang.String ) {
+						"value": "North"
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "North"
@@ -34,14 +61,14 @@ new FormModel {
 						"value": "left"
 					} )
 					add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-						"$horizontalGroup": "par l {seq {space :::p, par l {comp panel4::l:::x, comp panel3::l::121:x, seq {comp watchSave:::p::p, space s:::p, comp watchDel:::p::p, space :0:101:x}}, space :::p}}"
-						"$verticalGroup": "par l {seq t {comp panel4:::p::p, space s:::p, comp panel3:::p::p, space s:::p, par b {comp watchSave::b:p::p, comp watchDel::b:p::p}, space :::x}}"
+						"$horizontalGroup": "par l {seq {space :::p, par l {comp panel4::l:::x, comp panel3::t:::x, seq l {comp watchSave:::p::p, space s:::p, comp watchDel:::p::p, space :0:0:x}}, space :::p}}"
+						"$verticalGroup": "par l {seq t {comp panel4:::p::p, space :p:18:p, comp panel3:::p:254:p, space u:::p, par b {comp watchSave::b:p::p, comp watchDel::b:p::p}, space ::26:x}}"
 					} ) {
 						name: "panel2"
 						"border": new javax.swing.border.EmptyBorder( 20, 20, 20, 20 )
 						add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-							"$horizontalGroup": "par l {seq {space :::p, par l {comp panel5::l::0:x, comp watchUseRegex::t:::x, seq {space :6:6:p, comp label2:::p::p, space u:::p, comp watchUrlInclude:::::x}, seq l {par l {seq {space :p:6:p, comp label3:::p:77:p, space :p:11:p}, seq t {comp label4:::p:77:p, space u:::p}}, par l {comp watchReqHeadInclude::l:::x, comp watchReqBodyInclude::l:::x}}}, space :::p}}"
-							"$verticalGroup": "par l {seq t {space :::p, comp panel5:::p:36:p, space ::96:x, par b {comp label2::b:p::p, comp watchUrlInclude::b:p::p}, space :::p, par b {comp watchReqHeadInclude::b:p::p, comp label3::b:p::p}, space :::p, par b {comp watchReqBodyInclude::b:p::p, comp label4::b:p::p}, space s:::p, comp watchUseRegex:::p::p, space :p:57:p}}"
+							"$horizontalGroup": "par l {seq {space :::p, par l {comp watchUseRegex::t::513:x, seq {space :6:6:p, comp label2:::p::p, space u:::p, comp watchUrlInclude:::::x}, seq l {par l {seq {space :p:6:p, comp label3:::p:77:p, space :p:11:p}, seq t {comp label4:::p:77:p, space u:::p}}, par l {comp watchReqHeadInclude::l:::x, comp watchReqBodyInclude::l:::x}}, comp panel5::l:::x}, space :::p}}"
+							"$verticalGroup": "par l {seq t {space :::p, comp panel5:::p::p, space :::x, par b {comp label2::b:p::p, comp watchUrlInclude::b:p::p}, space :::p, par b {comp watchReqHeadInclude::b:p::p, comp label3::b:p::p}, space :::p, par b {comp watchReqBodyInclude::b:p::p, comp label4::b:p::p}, space s:::p, comp watchUseRegex:::p::p, space :p:57:p}}"
 						} ) {
 							name: "panel3"
 							"border": new javax.swing.border.TitledBorder( "监控参数（自动执行脚本需要配置）" )
@@ -99,7 +126,7 @@ new FormModel {
 							} )
 						} )
 						add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-							"$horizontalGroup": "par l {seq l {space :::p, par l {seq l {comp label8:::p::p, space :::p, comp watchCustom::::92:x}, seq l {comp label7:::p::p, space :::p, comp watchName::::92:x}}, space :::p}}"
+							"$horizontalGroup": "par l {seq l {space :::p, par l {seq l {comp label8:::p::p, space :::p, comp watchCustom::::442:x}, seq l {comp label7:::p::p, space :::p, comp watchName::::442:x}}, space :::p}}"
 							"$verticalGroup": "par l {seq {space :p:8:p, par b {comp label7::b:p::p, comp watchName::b:p::p}, space u:::p, par b {comp label8::b:p::p, comp watchCustom::b:p::p}, space :0:3:x}}"
 						} ) {
 							name: "panel4"

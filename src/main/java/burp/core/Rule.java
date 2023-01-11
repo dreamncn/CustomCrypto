@@ -1,9 +1,9 @@
 package burp.core;
-import org.checkerframework.checker.units.qual.A;
+
+import burp.BurpExtender;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class Rule implements Serializable {
     public String name = "";
@@ -16,7 +16,7 @@ public class Rule implements Serializable {
 
 
     public boolean inMethod(String m){
-        return method.size()==0||method.contains(m);
+        return method.size()==0||method.contains(m.toLowerCase());
     }
 
     public boolean inUrl(String u){
@@ -38,4 +38,8 @@ public class Rule implements Serializable {
         }
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
 }

@@ -113,9 +113,9 @@ public class HttpAgreement {
             response_body = process.get("response_body");
         }
         stringBuilder.append(response_version).append(" ").append(state).append(" ").append(state_msg).append("\r\n");
-        stringBuilder.append(headers).append("\r\n");
+        stringBuilder.append(response_headers).append("\r\n");
         stringBuilder.append("\r\n");
-        stringBuilder.append(body);
+        stringBuilder.append(response_body);
         return stringBuilder.toString();
     }
 
