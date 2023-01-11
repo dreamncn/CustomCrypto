@@ -1,54 +1,76 @@
 package burp;
 
-import burp.core.Rule;
-import burp.core.Rules;
+import burp.core.*;
+import burp.core.Process;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MessageEditorTab implements IMessageEditorTab {
-    private IMessageEditor messageEditor = null;
+    private ITextEditor messageEditor = null;
+    private boolean isRequest = false;
+    private IMessageEditorController iMessageEditorController = null;
     private void selectItem(ActionEvent e) {
         Rule rule = (Rule)selectBox.getSelectedItem();
         assert rule != null;
+        try {
+            Process process = new Process();
+            if(Objects.equals(rule.command, "")){
+                process.destroy();
+                return;
+            }
+            BurpExtender.print(String.format("脚本: %s 执行",rule.name));
+            Rules rules = new Rules();
+            if(isRequest){
+                HttpAgreement httpAgreement = new HttpAgreement(new String(iMessageEditorController.getRequest()),null,process);
+                if(rules.run(rule.command, CommandType.RequestFromClient,process.getTemp())){
+                    setMessage(httpAgreement.toRequest(process).getBytes(),isRequest);
+                }
+            }else{
+                HttpAgreement httpAgreement = new HttpAgreement(new String(iMessageEditorController.getRequest()),new String(iMessageEditorController.getResponse()),process);
+                if(rules.run(rule.command, CommandType.ResponseFromServer,process.getTemp())){
+                    setMessage(httpAgreement.toResponse(process).getBytes(),isRequest);
+                }
+            }
+        }catch (IOException exception){
+            exception.printStackTrace();
+            BurpExtender.print("错误信息2："+exception.getMessage(),1);
+        }
         BurpExtender.print("规则："+rule.toString());
     }
     private final JSplitPane rootPanel;
     private final JComboBox<Rule> selectBox;
     MessageEditorTab(IMessageEditorController iMessageEditorController, boolean b){
-        messageEditor = BurpExtender.callbacks.createMessageEditor(iMessageEditorController,false);
+        this.iMessageEditorController  =iMessageEditorController;
+        messageEditor = BurpExtender.callbacks.createTextEditor();
+        messageEditor.setEditable(b);
+        Component EditorComponent = messageEditor.getComponent();
         rootPanel = new JSplitPane();
         JPanel panel1 = new JPanel();
         JLabel label1 = new JLabel();
         selectBox = new JComboBox<>();
-        JLabel label2 = new JLabel();
 
         //======== splitPane1 ========
         rootPanel.setOrientation(JSplitPane.VERTICAL_SPLIT);
         //======== panel1 ========
-        panel1.setMinimumSize(new Dimension(149, 60));
-        panel1.setPreferredSize(new Dimension(75, 30));
-        panel1.setMaximumSize(new Dimension(2147483647, 60));
+        panel1.setPreferredSize(new Dimension(0, 30));
+        panel1.setMaximumSize(new Dimension(2147483647, 30));
         panel1.setLayout(new BorderLayout());
         //---- label1 ----
         label1.setText("\u8bf7\u9009\u62e9\u811a\u672c  ");
-        label1.setPreferredSize(new Dimension(100, 30));
         panel1.add(label1, BorderLayout.WEST);
 
         //---- comboBox1 ----
-        selectBox.setPreferredSize(new Dimension(0, 15));
         selectBox.addActionListener(this::selectItem);
+        selectBox.setPreferredSize(new Dimension(0, 30));
         panel1.add(selectBox, BorderLayout.CENTER);
 
-        //---- label2 ----
-        label2.setText("\u53d1\u9001\u6570\u636e\u5305\u8bf7\u4e0d\u8981\u4f7f\u7528\u89e3\u5bc6\u540e\u7684\u7ed3\u679c\u3002");
-        panel1.add(label2, BorderLayout.NORTH);
-
-
-        class Model implements ComboBoxModel<Rule>{
+          class Model implements ComboBoxModel<Rule>{
             private final ArrayList<Rule> arrayList;
             private Rule rule = null;
             Model(){
@@ -83,9 +105,9 @@ public class MessageEditorTab implements IMessageEditorTab {
             }
         }
         selectBox.setModel(new Model());
-
         rootPanel.setTopComponent(panel1);
-        rootPanel.setBottomComponent(messageEditor.getComponent());
+
+        rootPanel.setBottomComponent(EditorComponent);
     }
     @Override
     public String getTabCaption() {
@@ -104,21 +126,22 @@ public class MessageEditorTab implements IMessageEditorTab {
 
     @Override
     public void setMessage(byte[] content, boolean isRequest) {
-        messageEditor.setMessage(content,isRequest);
+        this.isRequest = isRequest;
+        messageEditor.setText(content);
     }
 
     @Override
     public byte[] getMessage() {
-        return messageEditor.getMessage();
+        return messageEditor.getText();
     }
 
     @Override
     public boolean isModified() {
-        return messageEditor.isMessageModified();
+        return messageEditor.isTextModified();
     }
 
     @Override
     public byte[] getSelectedData() {
-        return messageEditor.getSelectedData();
+        return messageEditor.getSelectedText();
     }
 }

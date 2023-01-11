@@ -5,6 +5,7 @@ import burp.core.Process;
 import burp.core.*;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class BurpHttpListener implements IHttpListener, IProxyListener {
     private final Rules rules;
@@ -37,7 +38,7 @@ public class BurpHttpListener implements IHttpListener, IProxyListener {
             return false;
         }
         BurpExtender.print(String.format("脚本: %s 执行",rule.name));
-        if(rule.command==null)return false;
+        if(Objects.equals(rule.command, ""))return false;
         cmd[0] = rule.command;
         return true;
     }
