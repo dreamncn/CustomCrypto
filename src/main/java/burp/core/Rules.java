@@ -82,6 +82,8 @@ public class Rules {
 
     public boolean run(String command,CommandType type,String file){
         StringBuilder stringBuilder = new StringBuilder();
+        String root = Storage.readString("root");
+        command = command.replace("${root}",root);
         stringBuilder.append(command).append(" ");
         switch (type){
             case RequestFromClient:stringBuilder.append(0);break;

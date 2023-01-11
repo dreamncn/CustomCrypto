@@ -11,7 +11,6 @@ if(args.length!==2){
 
 //数据
 var path = args[1];
-
 const fs = require('fs');
 
 //获取
@@ -38,5 +37,5 @@ if(args[0]===ResponseFromServer){
     setResponseBody(getResponseBody()+"\r\n\r\n-----------\r\n changed by ankio 2023.")
 }
 
-
+//最后一定要输出 success
 console.log("success")

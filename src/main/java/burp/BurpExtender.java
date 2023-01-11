@@ -23,13 +23,17 @@ public class BurpExtender implements IBurpExtender,ITab {
 		stdout = new PrintWriter(callbacks.getStdout(),true);
 		stderr = new PrintWriter(callbacks.getStderr(),true);
 		callbacks.setExtensionName(extensionName+" "+version);
+		gui = new MainGUI();
+
 		try {
+
 			callbacks.registerHttpListener(new BurpHttpListener());
 			callbacks.registerProxyListener(new BurpHttpListener());
-			gui = new MainGUI();
+			callbacks.registerMessageEditorTabFactory(new MessageEditorTabFactory());
+
 			SwingUtilities.invokeLater(() -> {
 				BurpExtender.callbacks.addSuiteTab(BurpExtender.this);
-				stdout.println(
+				print(
 						"[+] " + BurpExtender.extensionName + " is loaded\n"
 								+ "[+] ^_^\n"
 								+ "[+]\n"

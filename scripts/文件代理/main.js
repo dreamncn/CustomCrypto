@@ -12,10 +12,12 @@ var args = process.argv.slice(2);
 if(args.length!==2){
     throw "错误，至少有两个参数！"
 }
-
 //数据
 var path = args[1];
-
 const fs = require('fs');
+if(args[2]===ResponseToClient){
+    //替换body
 
-
+    //替换headers
+}
+console.log("success");

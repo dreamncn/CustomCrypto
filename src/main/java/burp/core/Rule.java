@@ -40,14 +40,6 @@ public class Rule implements Serializable {
 
     @Override
     public String toString() {
-        return "Rule{" +
-                "name='" + name + '\'' +
-                ", url='" + url + '\'' +
-                ", header='" + header + '\'' +
-                ", body='" + body + '\'' +
-                ", method=" + method +
-                ", regex=" + regex +
-                ", command='" + command + '\'' +
-                '}';
+        return name;
     }
 }
