@@ -15,9 +15,18 @@ if(args.length!==2){
 //数据
 var path = args[1];
 const fs = require('fs');
+const mime = require('mime');
 if(args[2]===ResponseToClient){
     //替换body
 
-    //替换headers
+    var file  = "./replace/"+fs.readFileSync(path[1]+"/path.txt");
+    if(fs.existsSync(file)){
+        fs.writeFileSync(path[1]+"/response_body.txt",fs.readFileSync(file));
+        //Content-type
+        var header = fs.readFileSync(path[1]+"/response_header.txt");
+        //替换headers
+        fs.writeFileSync(path[1]+"/response_header.txt",header.replace('/content-type:.*?/i',mime.getType(file)));
+    }
+
 }
 console.log("success");
