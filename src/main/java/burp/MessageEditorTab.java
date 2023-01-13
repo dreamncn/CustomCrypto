@@ -25,15 +25,15 @@ public class MessageEditorTab implements IMessageEditorTab {
                 return;
             }
             BurpExtender.print(String.format("脚本: %s 执行",rule.name));
-            Rules rules = new Rules();
+
             if(isRequest){
                 HttpAgreement httpAgreement = new HttpAgreement(new String(iMessageEditorController.getRequest()),null,process);
-                if(rules.run(rule.command, CommandType.RequestFromClient,process.getTemp())){
+                if(BurpExtender.rules.run(rule.command, CommandType.RequestFromClient,process.getTemp())){
                     setMessage(httpAgreement.toRequest(process).getBytes(),isRequest);
                 }
             }else{
                 HttpAgreement httpAgreement = new HttpAgreement(new String(iMessageEditorController.getRequest()),new String(iMessageEditorController.getResponse()),process);
-                if(rules.run(rule.command, CommandType.ResponseFromServer,process.getTemp())){
+                if(BurpExtender.rules.run(rule.command, CommandType.ResponseFromServer,process.getTemp())){
                     setMessage(httpAgreement.toResponse(process).getBytes(),isRequest);
                 }
             }
@@ -74,7 +74,7 @@ public class MessageEditorTab implements IMessageEditorTab {
             private final ArrayList<Rule> arrayList;
             private Rule rule = null;
             Model(){
-                arrayList = (new Rules()).getAll();
+                arrayList = BurpExtender.rules.getAll();
             }
             @Override
             public void setSelectedItem(Object anItem) {

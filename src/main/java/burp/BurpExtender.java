@@ -1,12 +1,13 @@
 package burp;
 
-import java.awt.Component;
+import burp.core.Rules;
+
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import javax.swing.SwingUtilities;
 
 public class BurpExtender implements IBurpExtender,ITab {
     public final static String extensionName = "CustomCrypto";
@@ -16,8 +17,7 @@ public class BurpExtender implements IBurpExtender,ITab {
 	public static PrintWriter stdout;
 	public static PrintWriter stderr;
 	public static MainGUI gui;
-
-
+	public static Rules rules;
 	@Override
 	public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
 		BurpExtender.callbacks = callbacks;
@@ -26,7 +26,7 @@ public class BurpExtender implements IBurpExtender,ITab {
 		stderr = new PrintWriter(callbacks.getStderr(),true);
 		callbacks.setExtensionName(extensionName+" "+version);
 		gui = new MainGUI();
-
+		rules = new Rules();
 		try {
 
 			callbacks.registerHttpListener(new BurpHttpListener());
@@ -35,7 +35,7 @@ public class BurpExtender implements IBurpExtender,ITab {
 
 			SwingUtilities.invokeLater(() -> {
 				BurpExtender.callbacks.addSuiteTab(BurpExtender.this);
-				print(
+				stdout.print(
 						"[+] " + BurpExtender.extensionName + " is loaded\n"
 								+ "[+] ^_^\n"
 								+ "[+]\n"

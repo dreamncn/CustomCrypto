@@ -8,11 +8,10 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class BurpHttpListener implements IHttpListener, IProxyListener {
-    private final Rules rules;
+
     HttpAgreement httpAgreement;
     BurpHttpListener() throws IOException {
 
-        rules = new Rules();
     }
     /**
      * 检查是否需要拦截
@@ -20,11 +19,10 @@ public class BurpHttpListener implements IHttpListener, IProxyListener {
      */
     private boolean analyze(IHttpRequestResponse request, boolean messageIsRequest,String[] cmd,Process process) throws IOException {
         BurpExtender.print("分析请求中");
-        if(!rules.getAuto()){
+        if(!BurpExtender.rules.getAuto()){
             BurpExtender.print("根据设置不自动解密");
             return false;
         }
-        rules.readRule();
         String url = request.getHttpService().getProtocol() + "://" + request.getHttpService().getHost();
         if(!messageIsRequest){
             httpAgreement = new HttpAgreement(new String(request.getRequest()),new String(request.getResponse()),process);
@@ -32,7 +30,7 @@ public class BurpHttpListener implements IHttpListener, IProxyListener {
             httpAgreement = new HttpAgreement(new String(request.getRequest()),null,process);
         }
         url += httpAgreement.path;
-        Rule rule = rules.findRule(httpAgreement.method, url, httpAgreement.headers, httpAgreement.body);
+        Rule rule = BurpExtender.rules.findRule(httpAgreement.method, url, httpAgreement.headers, httpAgreement.body);
         if(rule==null) {
             BurpExtender.print("没有合适的脚本允许解密");
             return false;
@@ -118,27 +116,27 @@ public class BurpHttpListener implements IHttpListener, IProxyListener {
      *
      */
     private void requestIn(IInterceptedProxyMessage message,Process process, String cmd) {
-        if(rules.run(cmd, CommandType.RequestFromClient,process.getTemp())){
+        if(BurpExtender.rules.run(cmd, CommandType.RequestFromClient,process.getTemp())){
             message.getMessageInfo().setRequest(httpAgreement.toRequest(process).getBytes());
         }
     }
     //requestOut阶段，即将发送request到服务端，读取明文的request，重新进行加密（包括签名、编码、更新时间戳等），使得服务端正常解析；
     private void requestOut(IHttpRequestResponse messageInfo, Process process,String cmd) {
-        if(rules.run(cmd, CommandType.RequestToServer,process.getTemp())){
+        if(BurpExtender.rules.run(cmd, CommandType.RequestToServer,process.getTemp())){
             messageInfo.setRequest(httpAgreement.toRequest(process).getBytes());
         }
     }
 
     //responseIn阶段，收到加密response，进行解密并替换responseBody，使得BurpSuite中显示明文response；
     private void responseIn(IHttpRequestResponse messageInfo, Process process, String cmd) {
-        if(rules.run(cmd, CommandType.ResponseFromServer,process.getTemp())){
+        if(BurpExtender.rules.run(cmd, CommandType.ResponseFromServer,process.getTemp())){
             messageInfo.setResponse(httpAgreement.toResponse(process).getBytes());
         }
     }
 
     //responseOut阶段，即将发送response到客户端，读取明文的response，重新进行加密，使得客户端正常解析。
     private void responseOut(IInterceptedProxyMessage message, Process process,String cmd) {
-        if(rules.run(cmd, CommandType.ResponseToClient,process.getTemp())){
+        if(BurpExtender.rules.run(cmd, CommandType.ResponseToClient,process.getTemp())){
             message.getMessageInfo().setResponse(httpAgreement.toResponse(process).getBytes());
         }
     }

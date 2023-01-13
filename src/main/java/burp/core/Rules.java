@@ -25,7 +25,7 @@ public class Rules {
          Storage.writeBoolean("auto",isAuto);
     }
     public ArrayList<Rule> getAll(){
-        rule = Storage.read("rules");
+        readRule();
         return rule;
     }
 
@@ -46,23 +46,15 @@ public class Rules {
      * 根据指定id获取执行的命令
      * @param id int
      */
-    public String getRuleCommand(int id){
-        if(id<rule.size()&&id>=0){
-            return rule.get(id).command;
-        }
-        return null;
-    }
-    /**
-     * 根据指定id获取执行的命令
-     * @param id int
-     */
     public Rule getRule(int id){
+        readRule();
         if(id<rule.size()&&id>=0){
             return rule.get(id);
         }
         return null;
     }
     public void update(int id,Rule rule){
+        readRule();
         if(id<this.rule.size()&&id>=0){
             this.rule.set(id,rule);
         }
@@ -70,12 +62,14 @@ public class Rules {
 
     }
     public void del(int id){
+        readRule();
         if(id<this.rule.size()&&id>=0){
             this.rule.remove(id);
         }
         saveRule();
     }
     public void add(Rule rule){
+        readRule();
         this.rule.add(rule);
         saveRule();
     }
@@ -123,8 +117,5 @@ public class Rules {
     private void saveRule(){
         Storage.write("rules",rule);
     }
-    @Override
-    protected void finalize() {
-        saveRule();
-    }
+
 }
