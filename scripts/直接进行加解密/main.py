@@ -20,21 +20,21 @@ file = sys.argv[2] + "/" + 'body.txt' if isRequest else 'response_body.txt'
 
 # 此处假设是body部分
 
-def encrypt(str){
-return '加密：'+str
-}
-def decrypt(str){
-return '解密：'+str
-}
+def encrypt(str):
+    return '加密：'+str
+
+def decrypt(str):
+    return '解密：'+str
+
 
 with open(file,'r',encoding='utf-8') as f:
     data = f.read()
 
-if(isEncrypt){
+if isEncrypt :
     data = encrypt(data)
-}else{
-data = decrypt(data)
-}
+else:
+    data = decrypt(data)
+
 
 with open(file,'w',encoding='utf-8') as f:
     f.write()

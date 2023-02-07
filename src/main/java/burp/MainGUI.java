@@ -4,21 +4,20 @@
 
 package burp;
 
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
 import burp.core.Rule;
-import burp.core.Rules;
 import burp.core.Storage;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputMethodEvent;
+import java.awt.event.InputMethodListener;
 import java.util.ArrayList;
 
 
@@ -27,14 +26,13 @@ import java.util.ArrayList;
  * @author ankio
  */
 public class MainGUI  {
-    private final Rules rules;
+
     /**
      * 构造函数
      */ MainGUI() {
         //初始化UI
         initComponents();
         //初始化数据
-        rules = new Rules();
         initData();
 
     }
@@ -45,10 +43,9 @@ public class MainGUI  {
      * 初始化数据
      */
     private void initData(){
-        rules.readRule();
-        autoRun.setSelected(rules.getAuto());
+        autoRun.setSelected(BurpExtender.rules.getAuto());
         ArrayList<String> arrayList = new ArrayList<>();
-        for (Rule rule:rules.getAll()) {
+        for (Rule rule:BurpExtender.rules.getAll()) {
             arrayList.add(rule.name);
         }
         watchList.setListData(arrayList.toArray(new String[0]));
@@ -71,7 +68,7 @@ public class MainGUI  {
         BurpExtender.print("选择："+select);
         if (select == -1) return;
 
-        Rule rule = rules.getRule(select);
+        Rule rule = BurpExtender.rules.getRule(select);
         if(rule==null)return;
         initTable();
         watchName.setText(rule.name);
@@ -92,7 +89,7 @@ public class MainGUI  {
     }
 
     private void autoRunStateChanged(ChangeEvent e) {
-        rules.setAuto(autoRun.isSelected());
+        BurpExtender.rules.setAuto(autoRun.isSelected());
     }
 
     private void watchRootInputMethodTextChanged(InputMethodEvent e) {
@@ -100,18 +97,17 @@ public class MainGUI  {
     }
 
     private void watchExport(ActionEvent e) {
-        StringSelection ss = new StringSelection(Storage.encode(rules.getAll()));//创建能传输指定 String 的 Transferable
+        StringSelection ss = new StringSelection(Storage.encode(BurpExtender.rules.getAll()));//创建能传输指定 String 的 Transferable
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null); //跟上面三行代码效果相同
-        Storage.encode(rules.getAll());
+        Storage.encode(BurpExtender.rules.getAll());
         showMsg("已复制到剪切板！");
     }
 
     private void watchImport(ActionEvent e) {
         String input = JOptionPane.showInputDialog( "请输入数据" );
         ArrayList<Rule> rules = Storage.decode(input);
-        Rules r = new Rules();
         for (Rule rule:rules ) {
-            r.add(rule);
+            BurpExtender.rules.add(rule);
         }
         showMsg("导入成功！");
     }
@@ -514,9 +510,9 @@ public class MainGUI  {
         if(watchPUT.isSelected())strings.add("put");
         rule.method = strings;
         if(select!=-1){
-            rules.update(select,rule);
+            BurpExtender.rules.update(select,rule);
         }else{
-            rules.add(rule);
+            BurpExtender.rules.add(rule);
         }
         select = -1;
         initData();
@@ -525,7 +521,7 @@ public class MainGUI  {
 
     private void watchDel(ActionEvent e) {
         if(select!=-1){
-            rules.del(select);
+            BurpExtender.rules.del(select);
             select = -1;
             initData();
         }

@@ -25,16 +25,15 @@ public class MessageEditorTab implements IMessageEditorTab {
                 return;
             }
             BurpExtender.print(String.format("脚本: %s 执行",rule.name));
-            Rules rules = new Rules();
             if(isRequest){
-                HttpAgreement httpAgreement = new HttpAgreement(new String(iMessageEditorController.getRequest()),null,process);
-                if(rules.run(rule.command, CommandType.RequestFromClient,process.getTemp())){
-                    setMessage(httpAgreement.toRequest(process).getBytes(),isRequest);
+                HttpAgreement httpAgreement = new HttpAgreement(iMessageEditorController.getRequest(),null,process);
+                if(BurpExtender.rules.run(rule.command, CommandType.RequestFromClient,process.getTemp())){
+                    setMessage(httpAgreement.toRequest(process),isRequest);
                 }
             }else{
-                HttpAgreement httpAgreement = new HttpAgreement(new String(iMessageEditorController.getRequest()),new String(iMessageEditorController.getResponse()),process);
-                if(rules.run(rule.command, CommandType.ResponseFromServer,process.getTemp())){
-                    setMessage(httpAgreement.toResponse(process).getBytes(),isRequest);
+                HttpAgreement httpAgreement = new HttpAgreement(iMessageEditorController.getRequest(),iMessageEditorController.getResponse(),process);
+                if(BurpExtender.rules.run(rule.command, CommandType.ResponseFromServer,process.getTemp())){
+                    setMessage(httpAgreement.toResponse(process),isRequest);
                 }
             }
         }catch (IOException exception){
@@ -74,7 +73,7 @@ public class MessageEditorTab implements IMessageEditorTab {
             private final ArrayList<Rule> arrayList;
             private Rule rule = null;
             Model(){
-                arrayList = (new Rules()).getAll();
+                arrayList = BurpExtender.rules.getAll();
             }
             @Override
             public void setSelectedItem(Object anItem) {
