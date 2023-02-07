@@ -25,16 +25,15 @@ public class MessageEditorTab implements IMessageEditorTab {
                 return;
             }
             BurpExtender.print(String.format("脚本: %s 执行",rule.name));
-
             if(isRequest){
-                HttpAgreement httpAgreement = new HttpAgreement(new String(iMessageEditorController.getRequest()),null,process);
+                HttpAgreement httpAgreement = new HttpAgreement(iMessageEditorController.getRequest(),null,process);
                 if(BurpExtender.rules.run(rule.command, CommandType.RequestFromClient,process.getTemp())){
-                    setMessage(httpAgreement.toRequest(process).getBytes(),isRequest);
+                    setMessage(httpAgreement.toRequest(process),isRequest);
                 }
             }else{
-                HttpAgreement httpAgreement = new HttpAgreement(new String(iMessageEditorController.getRequest()),new String(iMessageEditorController.getResponse()),process);
+                HttpAgreement httpAgreement = new HttpAgreement(iMessageEditorController.getRequest(),iMessageEditorController.getResponse(),process);
                 if(BurpExtender.rules.run(rule.command, CommandType.ResponseFromServer,process.getTemp())){
-                    setMessage(httpAgreement.toResponse(process).getBytes(),isRequest);
+                    setMessage(httpAgreement.toResponse(process),isRequest);
                 }
             }
         }catch (IOException exception){

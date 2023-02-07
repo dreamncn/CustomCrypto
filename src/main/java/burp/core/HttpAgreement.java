@@ -1,5 +1,7 @@
 package burp.core;
 
+import burp.BurpExtender;
+import burp.IRequestInfo;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
@@ -13,26 +15,32 @@ public class HttpAgreement {
     public String path = "";
     public String version = "";
     public String headers = "";
-    public String body = "";
+    public byte[]  body;
 
     public String response_version = "";
     public String state = "";
     public String state_msg = "";
     public String response_headers = "";
-    public String response_body = "";
+    public byte[] response_body;
     public HttpAgreement() throws IOException {
         new HttpAgreement(null);
     }
-    public HttpAgreement(String requestData) throws IOException {
-        new HttpAgreement(requestData,null,null);
+    public HttpAgreement(byte[] requestData) throws IOException {
+        new HttpAgreement(requestData,null);
     }
-    public HttpAgreement(String requestData,String responseData) throws IOException {
+    public HttpAgreement(byte[] requestData,byte[] responseData) throws IOException {
         new HttpAgreement(requestData,responseData,null);
     }
-    public HttpAgreement(String requestData,String responseData,Process process) throws IOException {
+    public byte[] subByte(byte[] b,int off,int length){
+        byte[] b1 = new byte[length];
+        System.arraycopy(b, off, b1, 0, length);
+        return b1;
+    }
+    public HttpAgreement(byte[] requestData,byte[] responseData,Process process) throws IOException {
         //从请求解析http协议
        if(requestData!=null){
-           Iterable<String> split = Splitter.on("\r\n").split(requestData);
+           IRequestInfo requestInfo = BurpExtender.helpers.analyzeRequest(requestData);
+           Iterable<String> split = Splitter.on("\r\n").split(new String(requestData));
            ArrayList<String> strings = Lists.newArrayList(split);
            String[] path =  strings.get(0).split(" "); //首行是请求头
            int i;
@@ -45,17 +53,18 @@ public class HttpAgreement {
                s.append(strings.get(i)).append("\r\n");
            }
            headers = s.toString().trim();
-           body = strings.get(strings.size()-1);
+
+           body = subByte(requestData,requestInfo.getBodyOffset(), requestData.length - requestInfo.getBodyOffset());
            if(process!=null){
                process.set("method",method);
                process.set("path",this.path);
                process.set("version",version);
                process.set("headers",headers);
-               process.set("body",body);
+               process.setRaw("body",body);
            }
        }
        if(responseData!=null){
-           Iterable<String> split = Splitter.on("\r\n").split(responseData);
+           Iterable<String> split = Splitter.on("\r\n").split(new String(responseData));
            ArrayList<String> strings = Lists.newArrayList(split);
            String[] path =  strings.get(0).split(" "); //首行是请求头
            int i;
@@ -68,55 +77,64 @@ public class HttpAgreement {
                s.append(strings.get(i)).append("\r\n");
            }
            response_headers = s.toString().trim();
-           response_body = strings.get(strings.size()-1);
+           IRequestInfo requestInfo = BurpExtender.helpers.analyzeRequest(responseData);
+           response_body = subByte(requestData,requestInfo.getBodyOffset(), responseData.length - requestInfo.getBodyOffset());
            if(process!=null){
                process.set("state",state);
                process.set("state_msg",this.state_msg);
                process.set("response_version",response_version);
                process.set("response_headers",response_headers);
-               process.set("response_body",response_body);
+               process.setRaw("response_body",response_body);
            }
        }
     }
-    String toRequest() {
+    byte[] toRequest() {
         return toRequest(null);
     }
-    public String toRequest(Process process) {
+    public static byte[] byteMerger(byte[] bt1, byte[] bt2){
+        byte[] bt3 = new byte[bt1.length+bt2.length];
+        System.arraycopy(bt1, 0, bt3, 0, bt1.length);
+        System.arraycopy(bt2, 0, bt3, bt1.length, bt2.length);
+        return bt3;
+    }
+    public byte[] toRequest(Process process) {
         StringBuilder stringBuilder = new StringBuilder();
         if(process!=null){
             method = process.get("method");
             path = process.get("path");
             version = process.get("version");
             headers = process.get("headers");
-            body = process.get("body");
+            body = process.getRaw("body");
 
         }
-        int length = body.getBytes(StandardCharsets.UTF_8).length;
+        int length = body.length;
         headers = headers.replaceAll("Content-Length: \\d+","Content-Length: "+length);
         //更新headers
         stringBuilder.append(method).append(" ").append(path).append(" ").append(version).append("\r\n");
         stringBuilder.append(headers).append("\r\n");
         stringBuilder.append("\r\n");
-        stringBuilder.append(body);
-        return stringBuilder.toString();
+        byte[] bytes = stringBuilder.toString().getBytes();
+
+        return byteMerger(bytes,body);
     }
-    String toResponse()  {
+    byte[] toResponse()  {
         return toResponse(null);
     }
-    public String toResponse(Process process) {
+    public byte[] toResponse(Process process) {
         StringBuilder stringBuilder = new StringBuilder();
         if(process!=null){
             state = process.get("state");
             state_msg = process.get("state_msg");
             response_version = process.get("response_version");
             response_headers = process.get("response_headers");
-            response_body = process.get("response_body");
+            response_body = process.getRaw("response_body");
         }
         stringBuilder.append(response_version).append(" ").append(state).append(" ").append(state_msg).append("\r\n");
         stringBuilder.append(response_headers).append("\r\n");
         stringBuilder.append("\r\n");
-        stringBuilder.append(response_body);
-        return stringBuilder.toString();
+        byte[] bytes = stringBuilder.toString().getBytes();
+
+        return byteMerger(bytes,response_body);
     }
 
 }

@@ -29,7 +29,8 @@ public class Process {
      */
     public void set(String key,String value){
         try {
-            Files.write(Paths.get(temp+"/"+key+".txt"), value.trim().getBytes());
+            Files.write(Paths.get(temp+"/"+key+".txt"), value.getBytes());
+            BurpExtender.print(String.format("写入文件（%s）数据：%s",key,value));
         } catch (IOException e) {
             e.printStackTrace();
             BurpExtender.print(String.format("错误：%s",e.getMessage()),1);
@@ -53,10 +54,31 @@ public class Process {
         return "";
     }
 
+    public byte[] getRaw(String key){
+        try {
+            BurpExtender.print("读取："+temp + "/" + key + ".txt");
+            return Files.readAllBytes(Paths.get(temp + "/" + key + ".txt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            BurpExtender.print(String.format("错误：%s",e.getMessage()),1);
+            BurpExtender.print(String.format("读取文件失败：%s",temp+"/"+key+".txt"));
+        }
+        return null;
+    }
+    public void setRaw(String key,byte[] value){
+        try {
+            Files.write(Paths.get(temp+"/"+key+".txt"), value);
+        } catch (IOException e) {
+            e.printStackTrace();
+            BurpExtender.print(String.format("错误：%s",e.getMessage()),1);
+            BurpExtender.print(String.format("写入文件失败：%s",temp+"/"+key+".txt"));
+        }
+    }
+
+
     public void destroy(){
         try {
             Path path = Paths.get(temp);
-
             Files.walkFileTree(path,
                     new SimpleFileVisitor<Path>() {
                         // 先去遍历删除文件

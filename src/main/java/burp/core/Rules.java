@@ -1,12 +1,9 @@
 package burp.core;
 
 import burp.BurpExtender;
-
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-
-
 public class Rules {
     private ArrayList<Rule> rule = null;
     private boolean auto = false;
@@ -28,20 +25,18 @@ public class Rules {
         readRule();
         return rule;
     }
-
     /**
      * 根据条件查找规则
      */
-    public Rule findRule(String method,String url,String headers,String body){
+    public Rule findRule(String method,String url,String headers){
         for (Rule r : getAll()) {
-            if (r.inMethod(method) && r.inBody(body) && r.inHeader(headers) && r.inUrl(url)) {
+            if (r.inMethod(method)  && r.inHeader(headers) && r.inUrl(url)) {
                 if(r.command.isEmpty())continue;
                 return r;
             }
         }
         return null;
     }
-
     /**
      * 根据指定id获取执行的命令
      * @param id int
@@ -59,7 +54,6 @@ public class Rules {
             this.rule.set(id,rule);
         }
         saveRule();
-
     }
     public void del(int id){
         readRule();
@@ -73,12 +67,10 @@ public class Rules {
         this.rule.add(rule);
         saveRule();
     }
-
     public boolean run(String command,CommandType type,String file){
         StringBuilder stringBuilder = new StringBuilder();
         String root = Storage.readString("root");
         if(root!=null) command = command.replace("${root}",root);
-
         stringBuilder.append(command).append(" ");
         switch (type){
             case RequestFromClient:stringBuilder.append(0);break;
@@ -95,9 +87,8 @@ public class Rules {
             return false;
         }
     }
-
     private String exec(String commands)  {
-        BurpExtender.print("执行命令："+commands);
+        BurpExtender.print("执行命令：" + commands);
         try{
             InputStream in = Runtime.getRuntime().exec(commands).getInputStream();
             byte[] bcache = new byte[1024];
