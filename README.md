@@ -3,6 +3,9 @@
 <img src="https://socialify.git.ci/dreamncn/CustomCrypto/image?description=1&descriptionEditable=%F0%9F%9A%80%20%20Burp%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8A%A0%E8%A7%A3%E5%AF%86%E6%8F%92%E4%BB%B6&font=Source%20Code%20Pro&forks=1&issues=1&language=1&name=1&pattern=Overlapping%20Hexagons&pulls=1&stargazers=1&theme=Light">
 </p>
 
+# 重要
+
+本项目关闭，合并至iCrypto：https://github.com/dreamncn/iCrypto
 
 ## 项目简介
 
